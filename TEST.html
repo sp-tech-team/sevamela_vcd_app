@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧪 Test Divine Games Festival App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen p-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-8 rounded-2xl shadow-lg mb-8">
+      <h1 class="text-3xl font-bold mb-2">🧪 App Testing Guide</h1>
+      <p class="text-amber-100">Test your app before the event</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Pre-Deployment Tests</h2>
+      
+      <div class="space-y-6">
+        <!-- Test 1 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test1" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test1" class="font-bold text-gray-800 cursor-pointer">
+                1. Open index.html in Browser
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Double-click <code class="bg-gray-100 px-2 py-1 rounded">index.html</code> 
+                - The app should load with the Divine Games Festival header
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: Orange/amber themed app loads successfully</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 2 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test2" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test2" class="font-bold text-gray-800 cursor-pointer">
+                2. Check Navigation Tabs
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Click each tab: Journey, Scan, Leaderboard, Admin
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: All tabs switch correctly, no errors</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 3 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test3" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test3" class="font-bold text-gray-800 cursor-pointer">
+                3. Test Camera Permissions
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Click "Scan" tab → Click "Open Camera"
+              </p>
+              <div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p class="text-sm text-amber-800">⚠️ Note: Camera may not work on file:// protocol. Deploy to test scanning.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 4 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test4" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test4" class="font-bold text-gray-800 cursor-pointer">
+                4. Check Admin Panel
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Go to Admin tab → Enter PIN: <code class="bg-gray-100 px-2 py-1 rounded">1234</code>
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: Admin panel opens, shows stall selector</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 5 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test5" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test5" class="font-bold text-gray-800 cursor-pointer">
+                5. Verify Five Stalls Display
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                On Journey tab, check all 5 stalls are listed
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: Harmony Haven, Wisdom Well, Peace Pavilion, Serenity Square, Bliss Bay</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 6 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test6" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test6" class="font-bold text-gray-800 cursor-pointer">
+                6. Test QR Code Generator
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Open <code class="bg-gray-100 px-2 py-1 rounded">qr-generator.html</code> 
+                → Enter test URL → Check QR codes generate
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: 5 colorful QR codes appear with download buttons</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post-Deployment Tests -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Post-Deployment Tests</h2>
+      <p class="text-gray-600 mb-6">After deploying to Netlify/Vercel, run these tests:</p>
+      
+      <div class="space-y-6">
+        <!-- Test 7 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test7" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test7" class="font-bold text-gray-800 cursor-pointer">
+                7. Access Deployed URL
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Open your deployed URL on mobile phone
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: App loads with HTTPS (🔒 lock icon)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 8 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test8" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test8" class="font-bold text-gray-800 cursor-pointer">
+                8. Generate Real QR Codes
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Use qr-generator.html with your real deployed URL → Download all QR codes
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: 5 QR code PNG files downloaded successfully</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 9 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test9" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test9" class="font-bold text-gray-800 cursor-pointer">
+                9. Test QR Code Scanning
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Display QR code on computer screen → Scan with phone camera → App should open
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: App opens, camera permission requested, scan works</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 10 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test10" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test10" class="font-bold text-gray-800 cursor-pointer">
+                10. Test Full User Flow
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Scan QR → Get username → Check Journey page → Admin awards points → Check leaderboard
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: Complete flow works, scores update correctly</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 11 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test11" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test11" class="font-bold text-gray-800 cursor-pointer">
+                11. Test Multiple Users
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                Open app on 2-3 different phones → Scan different stalls → Check leaderboard shows all
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: Leaderboard shows multiple users with correct rankings</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test 12 -->
+        <div class="border-2 border-gray-200 rounded-xl p-6">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" id="test12" class="mt-1 w-5 h-5">
+            <div class="flex-1">
+              <label for="test12" class="font-bold text-gray-800 cursor-pointer">
+                12. Test Admin Scoring
+              </label>
+              <p class="text-sm text-gray-600 mt-2">
+                As admin, award points to different users → Check combined scores update
+              </p>
+              <div class="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+                <p class="text-sm text-green-800">✅ Expected: Points added, leaderboard reorders correctly</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Common Issues & Solutions</h2>
+      
+      <div class="space-y-4">
+        <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded">
+          <p class="font-bold text-red-800">❌ Camera doesn't work locally</p>
+          <p class="text-sm text-red-700 mt-1">
+            Solution: Camera requires HTTPS. Deploy to Netlify/Vercel first, then test.
+          </p>
+        </div>
+
+        <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded">
+          <p class="font-bold text-red-800">❌ "Cannot read property of undefined"</p>
+          <p class="text-sm text-red-700 mt-1">
+            Solution: Check that both index.html and App.jsx are in the same folder.
+          </p>
+        </div>
+
+        <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded">
+          <p class="font-bold text-red-800">❌ QR codes won't scan</p>
+          <p class="text-sm text-red-700 mt-1">
+            Solution: Ensure QR generator has correct deployed URL (with https://).
+          </p>
+        </div>
+
+        <div class="border-l-4 border-yellow-500 bg-yellow-50 p-4 rounded">
+          <p class="font-bold text-yellow-800">⚠️ Styles look broken</p>
+          <p class="text-sm text-yellow-700 mt-1">
+            Solution: Check internet connection - Tailwind CSS loads from CDN.
+          </p>
+        </div>
+
+        <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded">
+          <p class="font-bold text-green-800">✅ Everything works!</p>
+          <p class="text-sm text-green-700 mt-1">
+            Great! Proceed with printing QR codes and setting up for your event.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-8 text-gray-600">
+      <p class="text-sm">🕉️ Divine Games Festival Testing Suite 🕉️</p>
+      <p class="text-xs mt-2">Complete all tests before your event day</p>
+    </div>
+  </div>
+</body>
+</html>
