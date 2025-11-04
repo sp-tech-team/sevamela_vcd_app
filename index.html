@@ -226,7 +226,7 @@
     /* Progress bar with candy stripes */
     .progress-bar-container {
       position: relative;
-      height: 8px;
+      height: 16px;
       background: #e5e7eb;
       border-radius: 10px;
       overflow: hidden;
@@ -299,7 +299,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: white;
+      background: linear-gradient(135deg, #fff5f0 0%, #fef3e7 100%);
       border-top: 1px solid #e5e7eb;
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
       z-index: 1000;
@@ -321,13 +321,22 @@
       color: #6b7280;
     }
 
+    .nav-button svg {
+      display: block !important;
+      width: 24px;
+      height: 24px;
+    }
+
     .nav-button.active {
       color: #f97316;
+      background: rgba(249, 115, 22, 0.1);
+      border-radius: 12px;
     }
 
     .nav-button:hover {
       color: #f97316;
       background: rgba(249, 115, 22, 0.05);
+      border-radius: 12px;
     }
 
     .nav-label {
@@ -384,6 +393,8 @@
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       transition: all 0.3s ease;
+      display: flex;
+      flex-direction: row;
     }
 
     .game-card:hover {
@@ -392,14 +403,21 @@
     }
 
     .game-card-image {
-      width: 100%;
-      height: 160px;
+      width: 140px;
+      min-height: 140px;
+      max-height: 200px;
       object-fit: cover;
+      object-position: center;
+      flex-shrink: 0;
+      background: #f9fafb;
+      clip-path: inset(10% 0 10% 0);
     }
 
     @media (max-width: 768px) {
       .game-card-image {
-        height: 140px;
+        width: 120px;
+        min-height: 120px;
+        max-height: 180px;
       }
     }
 
@@ -407,19 +425,32 @@
     .score-table-container {
       overflow-x: auto;
       max-width: 100%;
+      -webkit-overflow-scrolling: touch;
     }
 
     .score-table {
       width: 100%;
-      min-width: 600px;
+      min-width: 400px;
       border-collapse: collapse;
+      font-size: 0.875rem;
     }
 
     .score-table th,
     .score-table td {
-      padding: 0.75rem;
+      padding: 0.5rem;
       text-align: left;
       border-bottom: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 768px) {
+      .score-table {
+        font-size: 0.75rem;
+      }
+      
+      .score-table th,
+      .score-table td {
+        padding: 0.375rem;
+      }
     }
 
     .score-table th {
@@ -449,6 +480,148 @@
     .stat-value {
       font-weight: 700;
       font-size: 1.125rem;
+    }
+
+    /* Fun fair login background */
+    .login-fun-fair {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .login-fun-fair > div {
+      position: absolute;
+      font-size: 3rem;
+      animation: float-bounce 3s ease-in-out infinite;
+    }
+
+    @keyframes float-bounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10000;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      animation: slideDown 0.3s ease-out;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    .toast.success {
+      background: #10b981;
+      color: white;
+    }
+
+    .toast.error {
+      background: #ef4444;
+      color: white;
+    }
+
+    .toast.info {
+      background: #3b82f6;
+      color: white;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+
+    /* Custom Modal/Dialog */
+    .custom-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .custom-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-message {
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    .modal-btn {
+      padding: 0.625rem 1.25rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .modal-btn-cancel {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .modal-btn-cancel:hover {
+      background: #e5e7eb;
+    }
+
+    .modal-btn-confirm {
+      background: #f97316;
+      color: white;
+    }
+
+    .modal-btn-confirm:hover {
+      background: #ea580c;
     }
   </style>
 </head>
@@ -483,7 +656,7 @@
         <div style="position: absolute; right: 10%; bottom: 30%; font-size: 38px; animation: float 4.5s ease-in-out infinite; animation-delay: 1.5s;">🐵🍌</div>
       </div>
 
-      <p class="splash-tagline">"Explore the journey from a Monkey to a Yogi"</p>
+      <p class="splash-tagline">"Evolve from Monkey to Yogi"</p>
       
       <div class="loading-dots">
         <span></span>
@@ -505,6 +678,7 @@
         qrCode: 'GAME1_WHEEL_OF_FORTUNE',
         image: 'wheel_game.png',
         stageName: 'Seeker',
+        stageSlogan: 'The first step is seeking the truth within',
         stagePoints: 10,
         gamePoints: 20,
         maxCoins: 100
@@ -515,6 +689,7 @@
         qrCode: 'GAME2_MEMORY_CARD_QUIZ',
         image: 'memory_card.png',
         stageName: 'Explorer',
+        stageSlogan: 'Exploration leads to inner discovery',
         stagePoints: 10,
         gamePoints: 20,
         maxCoins: 100
@@ -525,6 +700,7 @@
         qrCode: 'GAME3_PAPER_PLANE',
         image: 'paper_plane.png',
         stageName: 'Wanderer',
+        stageSlogan: 'Wandering the path, finding your way home',
         stagePoints: 10,
         gamePoints: 15,
         maxCoins: 100
@@ -535,6 +711,7 @@
         qrCode: 'GAME4_VOLUNTEER_TREE',
         image: 'volunteer_tree.png',
         stageName: 'Yogi',
+        stageSlogan: 'The Yogi serves, transforms, and transcends',
         stagePoints: 15,
         gamePoints: 0,
         maxCoins: 0
@@ -556,33 +733,23 @@
 
     const ADMIN_PIN = '1234';
 
-    function Icon({ name, size = 24, className = "", strokeWidth = 2 }) {
+    function Icon({ name, size = 24, className = "" }) {
       const iconRef = useRef(null);
       
       useEffect(() => {
         if (iconRef.current && window.lucide) {
-          const IconComponent = window.lucide[name];
-          if (IconComponent) {
-            iconRef.current.innerHTML = '';
-            const icon = IconComponent;
-            window.lucide.createElement(icon);
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('width', size);
-            svg.setAttribute('height', size);
-            svg.setAttribute('viewBox', '0 0 24 24');
-            svg.setAttribute('fill', 'none');
-            svg.setAttribute('stroke', 'currentColor');
-            svg.setAttribute('stroke-width', strokeWidth);
-            svg.setAttribute('stroke-linecap', 'round');
-            svg.setAttribute('stroke-linejoin', 'round');
-            svg.setAttribute('class', className);
-            iconRef.current.appendChild(svg);
-            window.lucide.createIcons({ icons: { [name]: icon }, nameAttr: 'data-lucide' });
-          }
+          iconRef.current.innerHTML = '';
+          iconRef.current.setAttribute('data-lucide', name);
+          window.lucide.createIcons();
         }
-      }, [name, size, className, strokeWidth]);
+      }, [name]);
       
-      return React.createElement('span', { ref: iconRef, className: 'inline-flex', 'data-lucide': name });
+      return React.createElement('i', { 
+        ref: iconRef, 
+        'data-lucide': name,
+        style: { width: size + 'px', height: size + 'px', display: 'inline-block' },
+        className: className
+      });
     }
 
     function SevaMelaApp() {
@@ -599,8 +766,54 @@
       const [selectedGame, setSelectedGame] = useState(null);
       const [successModalData, setSuccessModalData] = useState(null);
       const [activeView, setActiveView] = useState('home');
+      const [toast, setToast] = useState(null);
+      const [modal, setModal] = useState(null);
       const html5QrCodeRef = useRef(null);
       const isScanning = useRef(false);
+
+      const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+      };
+
+      const showModal = (title, message, onConfirm, confirmText = 'OK', showCancel = false) => {
+        return new Promise((resolve) => {
+          setModal({
+            title,
+            message,
+            onConfirm: () => {
+              if (onConfirm) onConfirm();
+              setModal(null);
+              resolve(true);
+            },
+            onCancel: () => {
+              setModal(null);
+              resolve(false);
+            },
+            confirmText,
+            showCancel
+          });
+        });
+      };
+
+      const showConfirm = (title, message) => {
+        return new Promise((resolve) => {
+          setModal({
+            title,
+            message,
+            onConfirm: () => {
+              setModal(null);
+              resolve(true);
+            },
+            onCancel: () => {
+              setModal(null);
+              resolve(false);
+            },
+            confirmText: 'Yes',
+            showCancel: true
+          });
+        });
+      };
 
       useEffect(() => {
         const savedParticipants = localStorage.getItem('sevaMelaParticipants');
@@ -661,7 +874,7 @@
       const handleOnboardingSubmit = () => {
         if (userCategory === 'Admin') {
           if (adminPinInput !== ADMIN_PIN) {
-            alert('Incorrect admin PIN');
+            showToast('Incorrect PIN', 'error');
             return;
           }
           
@@ -688,7 +901,7 @@
         }
 
         if (!userName.trim() || !userCategory) {
-          alert('Please enter your name and select a category');
+          showToast('Enter name & category', 'error');
           return;
         }
 
@@ -698,19 +911,18 @@
         );
         
         if (existingUser) {
-          const result = confirm(
-            `Welcome back, ${trimmedName}!\n\n` +
-            `A user with name "${trimmedName}" and category "${userCategory}" already exists.\n\n` +
-            `Click OK to continue with your existing account\n` +
-            `Click Cancel to choose a different name`
+          showModal(
+            'Welcome back!',
+            `User "${trimmedName}" (${userCategory}) already exists. Continue with existing account?`,
+            () => {
+              setCurrentUser(existingUser);
+              setUserName(existingUser.name);
+              setIsAdmin(existingUser.isAdmin);
+              setOnboardingComplete(true);
+            },
+            'Continue',
+            true
           );
-          
-          if (result) {
-            setCurrentUser(existingUser);
-            setUserName(existingUser.name);
-            setIsAdmin(existingUser.isAdmin);
-            setOnboardingComplete(true);
-          }
           return;
         }
         
@@ -824,7 +1036,7 @@
 
           const currentGameData = currentUser.games[matchedGame.id];
           if (currentGameData.scanned) {
-            alert(`You've already scanned ${matchedGame.name}! Move on to the next game.`);
+            showToast('Already scanned', 'info');
             return;
           }
 
@@ -871,7 +1083,7 @@
             setSuccessModalData(null);
           }, 2500);
         } else {
-          alert('Invalid QR code. Please scan a valid game QR code.');
+          showToast('Invalid QR code', 'error');
         }
       };
 
@@ -952,7 +1164,8 @@
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#fbbf24']
+          colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#fbbf24'],
+          zIndex: 10002
         });
 
         if (currentUser && currentUser.name === participantName && currentUser.category === participantCategory) {
@@ -1005,20 +1218,102 @@
         alert('Data refreshed!');
       };
 
-      const deletePlayer = (playerName, playerCategory) => {
+      const deletePlayer = async (playerName, playerCategory) => {
         if (!isAdmin) {
-          alert('Only admins can delete players');
+          showToast('Admin only', 'error');
           return;
         }
 
-        const result = confirm(`Delete ${playerName} (${playerCategory}) from the system?`);
+        const result = await showConfirm('Delete Player', `Remove ${playerName} (${playerCategory})?`);
         if (result) {
           const updatedParticipants = participants.filter(
             p => !(p.name === playerName && p.category === playerCategory)
           );
           setParticipants(updatedParticipants);
-          alert('Player deleted successfully!');
+          showToast('Player deleted', 'success');
         }
+      };
+
+      // CSV Export for data backup
+      const exportDataAsCSV = () => {
+        if (!isAdmin) {
+          alert('Only admins can export data');
+          return;
+        }
+        
+        const headers = ['Name', 'Category', ...GAMES.map(g => g.name + '_Stage%'), ...GAMES.map(g => g.name + '_Game%'), ...GAMES.map(g => g.name + '_Coins'), 'Total%'];
+        const rows = participants
+          .filter(p => !p.isAdmin)
+          .map(p => {
+            const stageScores = GAMES.map(g => p.games[g.id]?.stagePercent || 0);
+            const gameScores = GAMES.map(g => p.games[g.id]?.gamePercent || 0);
+            const coins = GAMES.map(g => p.games[g.id]?.coinsEarned || 0);
+            const total = [...stageScores, ...gameScores].reduce((a,b) => a+b, 0);
+            return [p.name, p.category, ...stageScores, ...gameScores, ...coins, Math.min(100, Math.round(total))];
+          });
+        
+        const csvContent = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `seva-mela-backup-${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showToast('✓ Data exported', 'success');
+      };
+
+      // CSV Import to restore data
+      const importDataFromCSV = (event) => {
+        if (!isAdmin) {
+          alert('Only admins can import data');
+          return;
+        }
+        
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const text = e.target.result;
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length < 2) {
+              alert('Invalid CSV file');
+              return;
+            }
+            
+            const restored = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+              const values = lines[i].split(',');
+              if (values.length < 2) continue;
+              
+              const name = values[0].trim();
+              const category = values[1].trim();
+              
+              const games = {};
+              GAMES.forEach((game, idx) => {
+                games[game.id] = {
+                  scanned: values[2 + idx] > 0 || values[2 + GAMES.length + idx] > 0,
+                  stagePercent: parseInt(values[2 + idx]) || 0,
+                  gamePercent: parseInt(values[2 + GAMES.length + idx]) || 0,
+                  coinsEarned: parseInt(values[2 + 2*GAMES.length + idx]) || 0
+                };
+              });
+              
+              restored.push({ name, category, isAdmin: false, games });
+            }
+            
+            if (confirm(`Import ${restored.length} participants? This will replace current data.`)) {
+              setParticipants([...participants.filter(p => p.isAdmin), ...restored]);
+              showToast(`✓ Imported ${restored.length} players`, 'success');
+            }
+          } catch (err) {
+            showToast('Error importing', 'error');
+          }
+        };
+        reader.readAsText(file);
       };
 
       const getScoreTableData = () => {
@@ -1048,11 +1343,22 @@
       };
 
       if (!onboardingComplete) {
-        return React.createElement('div', { className: "min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-blue-50" },
-          React.createElement('div', { className: "bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md border-2 border-orange-500" },
+        return React.createElement('div', { 
+          className: "min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-blue-50 relative overflow-hidden"
+        },
+          // Animated background emojis
+          React.createElement('div', { className: "login-fun-fair" },
+            React.createElement('div', { style: { top: '10%', left: '10%', animationDelay: '0s' } }, '🎪'),
+            React.createElement('div', { style: { top: '20%', right: '15%', fontSize: '2.5rem', animationDelay: '0.5s' } }, '🎡'),
+            React.createElement('div', { style: { bottom: '20%', left: '15%', fontSize: '2.5rem', animationDelay: '1s' } }, '🎠'),
+            React.createElement('div', { style: { bottom: '10%', right: '10%', fontSize: '3rem', animationDelay: '1.5s' } }, '🎢'),
+            React.createElement('div', { style: { top: '50%', left: '25%', fontSize: '2rem', animationDelay: '0.3s' } }, '🎯'),
+            React.createElement('div', { style: { top: '35%', right: '25%', fontSize: '2rem', animationDelay: '0.8s' } }, '🎈')
+          ),
+          React.createElement('div', { className: "bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md border-2 border-orange-500 relative z-10" },
             React.createElement('div', { className: "text-center mb-8" },
-              React.createElement('h2', { className: "text-3xl font-bold text-gray-800 mb-2" }, 'Welcome!'),
-              React.createElement('p', { className: "text-gray-600" }, 'Seva Mela - VCD Department')
+              React.createElement('h2', { className: "text-3xl font-bold text-gray-800 mb-2" }, 'Seva Mela'),
+              React.createElement('p', { className: "text-lg font-semibold text-orange-600" }, 'VCD Department')
             ),
             
             React.createElement('div', { className: "space-y-6" },
@@ -1064,7 +1370,29 @@
                   onChange: (e) => setUserName(e.target.value),
                   placeholder: "Enter your name",
                   className: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 transition-all"
-                })
+                }),
+                userName.trim() && userCategory && (() => {
+                  const trimmedName = userName.trim();
+                  const exactMatch = participants.find(p => 
+                    p.name === trimmedName && p.category === userCategory
+                  );
+                  const similarMatch = participants.find(p => 
+                    p.category === userCategory && 
+                    p.name.toLowerCase() !== trimmedName.toLowerCase() &&
+                    p.name.toLowerCase().startsWith(trimmedName.toLowerCase())
+                  );
+                  
+                  if (exactMatch) {
+                    return React.createElement('div', { className: "mt-2 text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-lg" },
+                      `✓ This account already exists. Click "Start Journey" to continue.`
+                    );
+                  } else if (similarMatch) {
+                    return React.createElement('div', { className: "mt-2 text-xs text-orange-600 bg-orange-50 px-3 py-2 rounded-lg" },
+                      `⚠ Similar name "${similarMatch.name}" exists. Consider using a different name.`
+                    );
+                  }
+                  return null;
+                })()
               ),
 
               React.createElement('div', null,
@@ -1084,14 +1412,14 @@
                 )
               ),
 
-              userCategory === 'Admin' && React.createElement('div', { className: "bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4" },
-                React.createElement('label', { className: "block text-sm font-bold text-yellow-800 mb-2" }, 'Admin PIN Required'),
+              userCategory === 'Admin' && React.createElement('div', { className: "bg-orange-50 border border-orange-200 rounded-xl p-4" },
+                React.createElement('label', { className: "block text-xs font-semibold text-orange-700 mb-2 uppercase tracking-wide" }, 'Admin PIN'),
                 React.createElement('input', {
                   type: "password",
                   value: adminPinInput,
                   onChange: (e) => setAdminPinInput(e.target.value),
-                  placeholder: "Enter admin PIN",
-                  className: "w-full px-4 py-3 border-2 border-yellow-300 rounded-xl focus:outline-none focus:border-yellow-500"
+                  placeholder: "••••",
+                  className: "w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 })
               ),
 
@@ -1109,34 +1437,78 @@
       const currentUserRank = leaderboard.findIndex(l => l.name === currentUser?.name && l.category === currentUser?.category) + 1;
 
       return React.createElement('div', { className: "min-h-screen bg-gray-50" },
-        // Simple header
-        React.createElement('div', { className: "bg-white border-b border-gray-200 p-4 sticky top-0 z-50 shadow-sm" },
+        // Toast Notification
+        toast && React.createElement('div', { 
+          className: `toast ${toast.type}`,
+          onClick: () => setToast(null)
+        }, toast.message),
+
+        // Custom Modal
+        modal && React.createElement('div', { className: "custom-modal-backdrop", onClick: modal.showCancel ? modal.onCancel : null },
+          React.createElement('div', { className: "custom-modal", onClick: (e) => e.stopPropagation() },
+            React.createElement('div', { className: "modal-title" }, modal.title),
+            React.createElement('div', { className: "modal-message" }, modal.message),
+            React.createElement('div', { className: "modal-buttons" },
+              modal.showCancel && React.createElement('button', {
+                onClick: modal.onCancel,
+                className: "modal-btn modal-btn-cancel"
+              }, 'Cancel'),
+              React.createElement('button', {
+                onClick: modal.onConfirm,
+                className: "modal-btn modal-btn-confirm"
+              }, modal.confirmText)
+            )
+          )
+        ),
+
+        // Header with VCD Department
+        React.createElement('div', { 
+          className: "border-b border-gray-200 p-4 sticky top-0 z-50 shadow-sm",
+          style: { background: 'linear-gradient(135deg, #fff5f0 0%, #fef3e7 100%)' }
+        },
           React.createElement('div', { className: "flex items-center justify-between max-w-7xl mx-auto" },
             React.createElement('div', { className: "flex items-center gap-3" },
-              React.createElement('h1', { className: "text-xl font-bold text-gray-800" }, 'Seva Mela'),
+              React.createElement('div', null,
+                React.createElement('h1', { className: "text-xl font-bold text-gray-800" }, 
+                  'Seva Mela'
+                ),
+                React.createElement('p', { className: "text-sm text-orange-600 font-medium" }, 'VCD Department')
+              ),
               isAdmin && React.createElement('span', { 
                 className: "text-xs bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700 border border-gray-300" 
               }, 'Admin')
             ),
-            !isAdmin && React.createElement('div', { className: "flex items-center gap-2" },
-              React.createElement('div', { className: "text-right" },
-                React.createElement('div', { className: "text-xs text-gray-500" }, currentUser?.category),
-                React.createElement('div', { className: "text-sm font-bold text-gray-800" }, currentUser?.name)
-              )
+            !isAdmin && React.createElement('div', { className: "text-right" },
+              React.createElement('div', { className: "text-sm font-bold text-gray-800" }, currentUser?.name),
+              React.createElement('div', { className: "text-xs text-gray-500" }, `(${currentUser?.category})`)
             )
           ),
           
-          // Progress bar
-          !isAdmin && React.createElement('div', { className: "mt-4 max-w-7xl mx-auto" },
-            React.createElement('div', { className: "flex items-center justify-between mb-2" },
-              React.createElement('span', { className: "text-sm font-bold text-gray-700" }, 'Progress'),
-              React.createElement('span', { className: "text-sm font-bold text-orange-600" }, `${progress}%`)
-            ),
-            React.createElement('div', { className: "progress-bar-container" },
-              React.createElement('div', {
-                className: "progress-fill",
-                style: { width: `${progress}%` }
-              })
+          // Progress bar with score and rank
+          !isAdmin && React.createElement('div', { className: "mt-3 max-w-7xl mx-auto" },
+            React.createElement('div', { className: "flex items-center gap-4" },
+              React.createElement('div', { className: "flex-1" },
+                React.createElement('div', { className: "flex items-center justify-between mb-1" },
+                  React.createElement('span', { className: "text-xs font-semibold text-gray-600" }, 'Progress'),
+                  React.createElement('span', { className: "text-xs font-bold text-orange-600" }, `${progress}%`)
+                ),
+                React.createElement('div', { className: "progress-bar-container" },
+                  React.createElement('div', {
+                    className: "progress-fill",
+                    style: { width: `${progress}%` }
+                  })
+                )
+              ),
+              React.createElement('div', { className: "flex gap-3" },
+                React.createElement('div', { className: "text-center px-3 py-1 bg-orange-50 rounded-lg" },
+                  React.createElement('div', { className: "text-xs text-gray-500" }, 'Score'),
+                  React.createElement('div', { className: "text-lg font-bold text-orange-600" }, `${progress}%`)
+                ),
+                currentUserRank > 0 && React.createElement('div', { className: "text-center px-3 py-1 bg-blue-50 rounded-lg" },
+                  React.createElement('div', { className: "text-xs text-gray-500" }, 'Rank'),
+                  React.createElement('div', { className: "text-lg font-bold text-blue-600" }, `#${currentUserRank}`)
+                )
+              )
             )
           )
         ),
@@ -1146,48 +1518,65 @@
           activeView === 'scores' && isAdmin ? React.createElement('div', null,
             React.createElement('div', { className: "flex items-center justify-between mb-4" },
               React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, 'Player Scores'),
-              React.createElement('button', {
-                onClick: handleRefresh,
-                className: "flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
-              },
-                React.createElement(Icon, { name: 'RotateCw', size: 16 }),
-                'Refresh Scores'
+              React.createElement('div', { className: "flex gap-2" },
+                React.createElement('button', {
+                  onClick: exportDataAsCSV,
+                  className: "flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-all"
+                },
+                  React.createElement(Icon, { name: 'Download', size: 16 }),
+                  'Export CSV'
+                ),
+                React.createElement('label', {
+                  className: "flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-all cursor-pointer"
+                },
+                  React.createElement(Icon, { name: 'Upload', size: 16 }),
+                  'Import CSV',
+                  React.createElement('input', {
+                    type: "file",
+                    accept: ".csv",
+                    onChange: importDataFromCSV,
+                    className: "hidden"
+                  })
+                ),
+                React.createElement('button', {
+                  onClick: handleRefresh,
+                  className: "flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+                },
+                  React.createElement(Icon, { name: 'RotateCw', size: 16 }),
+                  'Refresh'
+                )
               )
             ),
-            React.createElement('div', { className: "bg-white rounded-2xl shadow-sm border border-gray-200 p-6" },
+            React.createElement('div', { className: "space-y-4" },
               getScoreTableData().length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
                 React.createElement('p', null, 'No players yet')
-              ) : React.createElement('div', { className: "score-table-container" },
-                React.createElement('table', { className: "score-table" },
-                  React.createElement('thead', null,
-                    React.createElement('tr', null,
-                      React.createElement('th', null, 'Player'),
-                      React.createElement('th', null, 'Category'),
-                      GAMES.map(game => 
-                        React.createElement('th', { key: game.id, className: "text-center" }, game.name.substring(0, 6))
-                      ),
-                      React.createElement('th', { className: "text-center" }, 'Total')
-                    )
+              ) : getScoreTableData().map(player =>
+                React.createElement('div', { 
+                  key: `${player.name}-${player.category}`,
+                  className: "bg-white rounded-xl shadow-sm border border-gray-200 p-4"
+                },
+                  // Player header
+                  React.createElement('div', { className: "flex items-center justify-between mb-3 pb-3 border-b border-gray-200" },
+                    React.createElement('div', null,
+                      React.createElement('div', { className: "font-bold text-lg text-gray-800" }, player.name),
+                      React.createElement('div', { className: "text-xs text-gray-500" }, player.category)
+                    ),
+                    React.createElement('div', { className: "text-2xl font-bold text-orange-600" }, `${player.totalPoints}%`)
                   ),
-                  React.createElement('tbody', null,
-                    getScoreTableData().map(player =>
-                      React.createElement('tr', { key: `${player.name}-${player.category}` },
-                        React.createElement('td', { className: "font-bold text-gray-800" }, player.name),
-                        React.createElement('td', { className: "text-gray-600 text-sm" }, player.category),
-                        player.gameScores.map(score =>
-                          React.createElement('td', { key: score.gameId, className: "text-center text-xs" },
-                            score.scanned 
-                              ? React.createElement('div', { 
-                                  className: score.gamePercent > 0 ? 'text-green-600 font-bold' : 'text-orange-600 font-bold'
-                                },
-                                  score.gamePercent > 0 && `G:${score.gamePercent}%`,
-                                  score.gamePercent > 0 && React.createElement('br'),
-                                  `S:${score.stagePercent}%`
-                                )
-                              : React.createElement('span', { className: 'text-gray-400' }, '-')
-                          )
-                        ),
-                        React.createElement('td', { className: "text-center font-bold text-orange-600 text-lg" }, `${player.totalPoints}%`)
+                  // Game scores grid
+                  React.createElement('div', { className: "grid grid-cols-2 gap-3" },
+                    player.gameScores.map(score =>
+                      React.createElement('div', { 
+                        key: score.gameId,
+                        className: `p-3 rounded-lg ${score.scanned ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50 border border-gray-200'}`
+                      },
+                        React.createElement('div', { className: "text-xs font-semibold text-gray-700 mb-1" }, score.gameName),
+                        score.scanned 
+                          ? React.createElement('div', { className: "flex gap-2 text-xs" },
+                              score.gamePercent > 0 && React.createElement('div', { className: "font-bold text-green-600" }, `G:${score.gamePercent}%`),
+                              React.createElement('div', { className: "font-bold text-orange-600" }, `S:${score.stagePercent}%`)
+                            )
+                          : React.createElement('div', { className: 'text-xs text-gray-400' }, 'Not started')
                       )
                     )
                   )
@@ -1195,24 +1584,6 @@
               )
             )
           ) : React.createElement('div', null,
-            // Stats section for users
-            !isAdmin && React.createElement('div', { className: "mb-6 grid grid-cols-2 gap-3" },
-              React.createElement('div', { className: "stat-badge" },
-                React.createElement(Icon, { name: 'Target', size: 20, className: 'text-orange-600' }),
-                React.createElement('div', null,
-                  React.createElement('div', { className: "text-xs text-gray-500" }, 'Score'),
-                  React.createElement('div', { className: "stat-value text-orange-600" }, `${progress}%`)
-                )
-              ),
-              currentUserRank > 0 && React.createElement('div', { className: "stat-badge" },
-                React.createElement(Icon, { name: 'Trophy', size: 20, className: 'text-blue-600' }),
-                React.createElement('div', null,
-                  React.createElement('div', { className: "text-xs text-gray-500" }, 'Rank'),
-                  React.createElement('div', { className: "stat-value text-blue-600" }, `#${currentUserRank}`)
-                )
-              )
-            ),
-
             isAdmin && React.createElement('div', { className: "flex items-center justify-between mb-4" },
               React.createElement('div', null),
               React.createElement('button', {
@@ -1254,13 +1625,17 @@
                     React.createElement('div', { className: "flex items-start justify-between mb-3" },
                       React.createElement('div', null,
                         React.createElement('h3', { className: "font-bold text-lg text-gray-800 mb-1" }, game.name),
-                        React.createElement('p', { className: "text-sm text-gray-500" }, currentStage)
+                        gameData?.scanned 
+                          ? React.createElement('div', { className: "flex items-center gap-1" },
+                              React.createElement('span', { className: "text-sm font-semibold text-orange-600" }, '🔓 ' + game.stageName),
+                              React.createElement('span', { className: "text-xs text-gray-500" }, ' unlocked')
+                            )
+                          : React.createElement('p', { className: "text-sm text-gray-500" }, '🔒 Not Started')
                       ),
                       gameData?.scanned && !isAdmin && React.createElement('div', { 
                         className: "flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold" 
                       },
-                        React.createElement(Icon, { name: 'Check', size: 14 }),
-                        'Done'
+                        '✓'
                       )
                     ),
 
@@ -1290,12 +1665,18 @@
         successModalData && React.createElement('div', { className: "modal-backdrop" },
           React.createElement('div', { className: "success-modal" },
             React.createElement('div', { className: "text-center" },
+              React.createElement('div', { className: "text-6xl mb-3 animate-bounce" }, '🎉'),
               React.createElement('div', { className: "success-checkmark" },
-                React.createElement(Icon, { name: 'Check', size: 48, className: 'text-white', strokeWidth: 3 })
+                React.createElement(Icon, { name: 'Check', size: 48, className: 'text-white' })
               ),
-              React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-2" }, 'Success!'),
-              React.createElement('p', { className: "text-lg text-gray-600 mb-4" },
+              React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-2" }, 
+                `${successModalData.game.stageName} Unlocked!`
+              ),
+              React.createElement('p', { className: "text-lg font-semibold text-orange-600 mb-3" },
                 successModalData.game.name
+              ),
+              React.createElement('p', { className: "text-sm italic text-gray-600 mb-4 px-4" },
+                `"${successModalData.game.stageSlogan}"`
               ),
               React.createElement('div', { className: "bg-orange-50 rounded-xl p-4 mb-4 border border-orange-200" },
                 React.createElement('div', { className: "text-sm text-gray-600 mb-1" },
@@ -1307,8 +1688,8 @@
               ),
               React.createElement('p', { className: "text-sm text-gray-500" },
                 successModalData.scannedCount === GAMES.length 
-                  ? 'All activities completed!' 
-                  : 'Keep going!'
+                  ? 'Journey complete! 🙏' 
+                  : 'Continue your journey...'
               )
             )
           )
@@ -1369,8 +1750,20 @@
             leaderboard.length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-12" },
               React.createElement('p', null, 'No participants yet')
             ) : React.createElement('div', { className: "space-y-3" },
-              leaderboard.map((player) =>
-                React.createElement('div', {
+              leaderboard.map((player) => {
+                const getTrophyEmoji = (rank) => {
+                  if (rank === 1) return '🥇';
+                  if (rank === 2) return '🥈';
+                  if (rank === 3) return '🥉';
+                  return '🏅';
+                };
+                const getTrophyColor = (rank) => {
+                  if (rank === 1) return 'text-yellow-500';
+                  if (rank === 2) return 'text-gray-400';
+                  if (rank === 3) return 'text-orange-600';
+                  return 'text-blue-500';
+                };
+                return React.createElement('div', {
                   key: `${player.name}-${player.category}`,
                   className: `p-4 rounded-xl border-2 ${
                     player.rank <= 3 ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-400' : 'bg-white border-gray-200'
@@ -1378,8 +1771,8 @@
                 },
                   React.createElement('div', { className: "flex justify-between items-center" },
                     React.createElement('div', { className: "flex items-center gap-3" },
-                      React.createElement('div', { className: "w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700" },
-                        `#${player.rank}`
+                      React.createElement('div', { className: `text-3xl ${getTrophyColor(player.rank)}` },
+                        getTrophyEmoji(player.rank)
                       ),
                       React.createElement('div', null,
                         React.createElement('div', { className: "font-bold text-gray-800" }, player.name),
@@ -1387,7 +1780,7 @@
                       )
                     ),
                     React.createElement('div', { className: "flex items-center gap-3" },
-                      React.createElement('div', { className: "text-2xl font-bold text-orange-600" }, `${player.totalPercentage}%`),
+                      React.createElement('div', { className: `text-2xl font-bold ${player.rank <= 3 ? getTrophyColor(player.rank) : 'text-orange-600'}` }, `${player.totalPercentage}%`),
                       isAdmin && React.createElement('button', {
                         onClick: (e) => {
                           e.stopPropagation();
@@ -1399,8 +1792,8 @@
                       )
                     )
                   )
-                )
-              )
+                );
+              })
             )
           )
         ),
@@ -1458,16 +1851,15 @@
                       className: "flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
                     }),
                     React.createElement('button', {
-                      onClick: () => {
+                      onClick: async () => {
                         const input = document.getElementById(`points-${player.name}-${player.category}`);
                         const coins = parseInt(input.value) || 0;
                         
-                        if (confirm(`Award ${coins} coins to ${player.name}?`)) {
-                          if (awardGamePoints(player.name, player.category, selectedGame.id, coins)) {
-                            const gamePercent = selectedGame.maxCoins > 0 ? Math.round((coins / selectedGame.maxCoins) * selectedGame.gamePoints) : 0;
-                            alert(`${coins} coins awarded = ${gamePercent}%!`);
-                            input.value = '';
-                          }
+                        const result = await showConfirm('Award Points', `Award ${coins} coins to ${player.name}?`);
+                        if (result && awardGamePoints(player.name, player.category, selectedGame.id, coins)) {
+                          const gamePercent = selectedGame.maxCoins > 0 ? Math.round((coins / selectedGame.maxCoins) * selectedGame.gamePoints) : 0;
+                          showToast(`✓ ${coins} coins = ${gamePercent}%`, 'success');
+                          input.value = '';
                         }
                       },
                       className: "px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold hover:scale-105 transition-all"
@@ -1486,33 +1878,34 @@
               onClick: startQRScanner,
               className: "nav-button"
             },
-              React.createElement(Icon, { name: 'ScanLine', size: 24 }),
+              React.createElement('div', { style: { fontSize: '24px' } }, '📷'),
               React.createElement('div', { className: "nav-label" }, 'Scan')
             ),
             React.createElement('button', {
               onClick: () => setShowLeaderboard(true),
-              className: "nav-button"
+              className: `nav-button ${showLeaderboard ? 'active' : ''}`
             },
-              React.createElement(Icon, { name: 'Trophy', size: 24 }),
+              React.createElement('div', { style: { fontSize: '24px' } }, '🏆'),
               React.createElement('div', { className: "nav-label" }, 'Board')
             ),
             isAdmin && React.createElement('button', {
               onClick: () => setActiveView(activeView === 'scores' ? 'home' : 'scores'),
               className: `nav-button ${activeView === 'scores' ? 'active' : ''}`
             },
-              React.createElement(Icon, { name: 'BarChart3', size: 24 }),
+              React.createElement('div', { style: { fontSize: '24px' } }, '📊'),
               React.createElement('div', { className: "nav-label" }, 'Scores')
             ),
             React.createElement('button', {
-              onClick: () => {
-                if (confirm('Logout?')) {
+              onClick: async () => {
+                const result = await showConfirm('Logout', 'Are you sure you want to logout?');
+                if (result) {
                   localStorage.removeItem('sevaMelaCurrentUser');
                   window.location.reload();
                 }
               },
               className: "nav-button"
             },
-              React.createElement(Icon, { name: 'LogOut', size: 24 }),
+              React.createElement('div', { style: { fontSize: '24px' } }, '🚪'),
               React.createElement('div', { className: "nav-label" }, 'Logout')
             )
           )
