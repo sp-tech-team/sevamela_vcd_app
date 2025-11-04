@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Divine Games Festival - Journey through the Five Realms">
-  <meta name="theme-color" content="#d97706">
-  <title>Divine Games Festival - Spiritual Journey</title>
+  <meta name="description" content="Seva Mela - VCD Department">
+  <meta name="theme-color" content="#f97316">
+  <title>Seva Mela - VCD Department</title>
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   
   <style>
     * {
@@ -26,28 +27,37 @@
         sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      padding-bottom: 80px;
+      background: #f8f9fa;
     }
 
-    /* Splash Screen Styles */
+    /* Splash Screen */
     .splash-screen {
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 25%, #ea580c 50%, #dc2626 75%, #9333ea 100%);
+      background: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #1e3a8a 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      animation: gradientShift 8s ease infinite;
     }
 
-    @keyframes gradientShift {
-      0%, 100% {
-        background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 25%, #ea580c 50%, #dc2626 75%, #9333ea 100%);
-      }
-      50% {
-        background: linear-gradient(135deg, #9333ea 0%, #dc2626 25%, #ea580c 50%, #f59e0b 75%, #fbbf24 100%);
-      }
+    .splash-logo {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 2rem;
+      border-radius: 50%;
+      object-fit: contain;
+      background: white;
+      padding: 15px;
+      animation: logoFloat 3s ease-in-out infinite;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-20px) scale(1.05); }
     }
 
     .splash-content {
@@ -57,14 +67,8 @@
     }
 
     @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .spiritual-path {
@@ -72,6 +76,7 @@
       width: 400px;
       height: 200px;
       margin: 40px auto;
+      max-width: 90vw;
     }
 
     .path-line {
@@ -97,153 +102,248 @@
     }
 
     @keyframes shimmer {
-      0% {
-        left: -100%;
-      }
-      100% {
-        left: 100%;
-      }
+      0% { left: -100%; }
+      100% { left: 100%; }
     }
 
     .monkey-walker {
       position: absolute;
-      bottom: 55px;
+      bottom: 45px;
       left: 0;
-      font-size: 32px;
+      font-size: 60px;
       animation: walkPath 4s ease-in-out infinite;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
     }
 
     @keyframes walkPath {
-      0% {
-        left: 0;
-        transform: scaleX(1);
-      }
-      45% {
-        left: calc(100% - 40px);
-        transform: scaleX(1);
-      }
-      55% {
-        left: calc(100% - 40px);
-        transform: scaleX(-1);
-      }
-      100% {
-        left: 0;
-        transform: scaleX(-1);
-      }
+      0%, 100% { left: 0; transform: translateX(0) scaleX(1); }
+      48% { transform: translateX(0) scaleX(1); }
+      50% { transform: translateX(0) scaleX(-1); }
+      98%, 100% { left: calc(100% - 60px); transform: translateX(0) scaleX(-1); }
     }
 
-    .destination-symbol {
+    .breathing-circle {
       position: absolute;
-      top: 0;
+      bottom: 70px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 48px;
-      filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
-      animation: glowPulse 2s ease-in-out infinite, breathe 4s ease-in-out infinite;
-    }
-
-    @keyframes glowPulse {
-      0%, 100% {
-        filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
-      }
-      50% {
-        filter: drop-shadow(0 0 40px rgba(251, 191, 36, 1));
-      }
+      width: 30px;
+      height: 30px;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      animation: breathe 4s ease-in-out infinite;
     }
 
     @keyframes breathe {
-      0%, 100% {
-        transform: translateX(-50%) scale(1);
-      }
-      50% {
-        transform: translateX(-50%) scale(1.1);
-      }
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.4; }
+      50% { transform: translateX(-50%) scale(1.5); opacity: 0.8; }
+    }
+
+    .floating-elements {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
     }
 
     .floating-particle {
       position: absolute;
       font-size: 24px;
       opacity: 0;
-      animation: floatUp 4s ease-in infinite;
+      animation: float 6s ease-in-out infinite;
     }
 
     .floating-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .floating-particle:nth-child(2) { left: 20%; animation-delay: 0.5s; }
-    .floating-particle:nth-child(3) { left: 30%; animation-delay: 1s; }
-    .floating-particle:nth-child(4) { left: 40%; animation-delay: 1.5s; }
-    .floating-particle:nth-child(5) { left: 50%; animation-delay: 2s; }
+    .floating-particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+    .floating-particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+    .floating-particle:nth-child(4) { left: 40%; animation-delay: 0.5s; }
+    .floating-particle:nth-child(5) { left: 50%; animation-delay: 1.5s; }
     .floating-particle:nth-child(6) { left: 60%; animation-delay: 2.5s; }
-    .floating-particle:nth-child(7) { left: 70%; animation-delay: 3s; }
-    .floating-particle:nth-child(8) { left: 80%; animation-delay: 3.5s; }
-    .floating-particle:nth-child(9) { left: 90%; animation-delay: 4s; }
+    .floating-particle:nth-child(7) { left: 70%; animation-delay: 1s; }
+    .floating-particle:nth-child(8) { left: 80%; animation-delay: 2s; }
+    .floating-particle:nth-child(9) { left: 90%; animation-delay: 0.8s; }
 
-    @keyframes floatUp {
-      0% {
-        bottom: 0;
-        opacity: 0;
-        transform: translateY(0) rotate(0deg);
-      }
-      10% {
-        opacity: 0.6;
-      }
-      90% {
-        opacity: 0.6;
-      }
-      100% {
-        bottom: 100%;
-        opacity: 0;
-        transform: translateY(-50px) rotate(360deg);
-      }
-    }
-
-    .breathing-circle {
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 60px;
-      border: 3px solid rgba(255, 255, 255, 0.5);
-      border-radius: 50%;
-      animation: circleBreath 4s ease-in-out infinite;
-    }
-
-    @keyframes circleBreath {
-      0%, 100% {
-        transform: translateX(-50%) scale(0.8);
-        opacity: 0.5;
-      }
-      50% {
-        transform: translateX(-50%) scale(1.2);
-        opacity: 1;
-      }
+    @keyframes float {
+      0% { bottom: -50px; opacity: 0; transform: translateX(0) rotate(0deg); }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { bottom: 100%; opacity: 0; transform: translateX(50px) rotate(360deg); }
     }
 
     .splash-title {
-      font-size: 2.5rem;
-      font-weight: bold;
       color: white;
-      text-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      margin-bottom: 0.5rem;
+      font-size: 3rem;
+      font-weight: 900;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 1rem;
       animation: textGlow 2s ease-in-out infinite;
     }
 
     @keyframes textGlow {
-      0%, 100% {
-        text-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5);
-      }
-      50% {
-        text-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.8);
-      }
+      0%, 100% { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+      50% { text-shadow: 0 4px 40px rgba(255, 255, 255, 0.6); }
     }
 
     .splash-tagline {
-      color: rgba(255,255,255,0.9);
-      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.25rem;
       margin-top: 1rem;
       font-style: italic;
-      animation: fadeIn 2s ease-in;
+    }
+
+    .loading-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .loading-dots span {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    .splash-hidden {
+      animation: fadeOutDown 0.8s ease-in-out forwards;
+    }
+
+    @keyframes fadeOutDown {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(30px); }
+    }
+
+    /* Progress bar with candy stripes */
+    .progress-bar-container {
+      position: relative;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(
+        45deg,
+        #fbbf24 25%,
+        #fcd34d 25%,
+        #fcd34d 50%,
+        #fbbf24 50%,
+        #fbbf24 75%,
+        #fcd34d 75%,
+        #fcd34d
+      );
+      background-size: 40px 40px;
+      animation: progressStripes 1s linear infinite;
+      transition: width 0.5s ease-in-out;
+      border-radius: 10px;
+    }
+
+    @keyframes progressStripes {
+      from { background-position: 0 0; }
+      to { background-position: 40px 0; }
+    }
+
+    /* Success Modal */
+    .success-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      background: white;
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: modalSlideIn 0.5s ease-out;
+      max-width: 90vw;
+      width: 400px;
+    }
+
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    .success-checkmark {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1rem;
+      border-radius: 50%;
+      background: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: successBounce 0.6s ease-out;
+    }
+
+    @keyframes successBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    /* Bottom Navigation - Game style */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+      z-index: 1000;
+      padding: 0.5rem 0;
+    }
+
+    .nav-button {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      padding: 0.5rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: #6b7280;
+    }
+
+    .nav-button.active {
+      color: #f97316;
+    }
+
+    .nav-button:hover {
+      color: #f97316;
+      background: rgba(249, 115, 22, 0.05);
+    }
+
+    .nav-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Modal backdrop */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      animation: fadeIn 0.3s ease;
     }
 
     @keyframes fadeIn {
@@ -251,796 +351,1051 @@
       to { opacity: 1; }
     }
 
-    .splash-hidden {
-      animation: fadeOut 0.8s ease-out forwards;
-    }
-
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-    }
-
-    .loading-dots {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 30px;
-    }
-
-    .loading-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
+    /* Leaderboard slide-in */
+    .leaderboard-slide {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 90%;
+      max-width: 500px;
       background: white;
-      animation: bounce 1.4s ease-in-out infinite;
+      z-index: 9999;
+      overflow-y: auto;
+      animation: slideInLeft 0.3s ease-out;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
     }
 
-    .loading-dot:nth-child(1) { animation-delay: 0s; }
-    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes bounce {
-      0%, 80%, 100% {
-        transform: scale(0.8);
-        opacity: 0.5;
-      }
-      40% {
-        transform: scale(1.2);
-        opacity: 1;
-      }
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
     }
 
-    /* Mobile Responsive */
-    @media (max-width: 640px) {
-      .spiritual-path {
-        width: 300px;
-        height: 150px;
-      }
-      .splash-title {
-        font-size: 1.8rem;
-      }
-      .splash-tagline {
-        font-size: 0.95rem;
-      }
+    #qr-reader {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
     }
 
-    /* Rest of styles */
-    .scan-button {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-      padding: 1rem 2rem;
-      border-radius: 9999px;
-      font-size: 1.125rem;
-      font-weight: 600;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s;
-      border: none;
-      cursor: pointer;
+    /* Game card styling */
+    .game-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
     }
-    
-    .scan-button:hover {
+
+    .game-card:hover {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
       transform: translateY(-2px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-    
-    .scan-button:active {
-      transform: translateY(0);
     }
 
-    .success-modal {
-      animation: modalSlideIn 0.5s ease-out;
+    .game-card-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
     }
 
-    @keyframes modalSlideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+    @media (max-width: 768px) {
+      .game-card-image {
+        height: 140px;
       }
     }
 
-    @keyframes confetti {
-      0% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(-300px) rotate(720deg);
-      }
+    /* Score table */
+    .score-table-container {
+      overflow-x: auto;
+      max-width: 100%;
     }
-    
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #f59e0b;
-      animation: confetti 2s ease-out forwards;
+
+    .score-table {
+      width: 100%;
+      min-width: 600px;
+      border-collapse: collapse;
+    }
+
+    .score-table th,
+    .score-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .score-table th {
+      background: #f9fafb;
+      font-weight: 700;
+      color: #374151;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .score-table tr:hover {
+      background: #f9fafb;
+    }
+
+    /* Stats badge */
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #f3f4f6;
+      border-radius: 12px;
+      font-size: 0.875rem;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      font-size: 1.125rem;
     }
   </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
+<body>
   <!-- Splash Screen -->
   <div id="splash-screen" class="splash-screen">
+    <div class="floating-elements">
+      <div class="floating-particle">🌸</div>
+      <div class="floating-particle">✨</div>
+      <div class="floating-particle">🪷</div>
+      <div class="floating-particle">🕉️</div>
+      <div class="floating-particle">🌺</div>
+      <div class="floating-particle">⭐</div>
+      <div class="floating-particle">💫</div>
+      <div class="floating-particle">✨</div>
+      <div class="floating-particle">🌸</div>
+    </div>
+
     <div class="splash-content">
-      <div class="splash-title">🕉️ Divine Games Festival 🕉️</div>
-      <div class="text-white text-lg mb-2">Journey through the Five Realms</div>
+      <img src="isha_symbol.jpg" alt="Isha Foundation" class="splash-logo" onerror="this.style.display='none'">
+      
+      <h1 class="splash-title">Seva Mela</h1>
+      <p class="text-4xl text-white font-bold mb-4">VCD Department</p>
       
       <div class="spiritual-path">
-        <div class="destination-symbol">🙏</div>
         <div class="path-line"></div>
         <div class="monkey-walker">🐒</div>
         <div class="breathing-circle"></div>
-        
-        <div class="floating-particle">🌸</div>
-        <div class="floating-particle">✨</div>
-        <div class="floating-particle">🪷</div>
-        <div class="floating-particle">🕉️</div>
-        <div class="floating-particle">🌺</div>
-        <div class="floating-particle">⭐</div>
-        <div class="floating-particle">💫</div>
-        <div class="floating-particle">🌸</div>
-        <div class="floating-particle">✨</div>
+        <div style="position: absolute; left: 10%; top: 20%; font-size: 40px; animation: float 3s ease-in-out infinite;">🐒🍌</div>
+        <div style="position: absolute; right: 15%; top: 30%; font-size: 35px; animation: float 4s ease-in-out infinite; animation-delay: 1s;">🐵🍌</div>
+        <div style="position: absolute; left: 20%; bottom: 20%; font-size: 45px; animation: float 3.5s ease-in-out infinite; animation-delay: 0.5s;">🐒🍌</div>
+        <div style="position: absolute; right: 10%; bottom: 30%; font-size: 38px; animation: float 4.5s ease-in-out infinite; animation-delay: 1.5s;">🐵🍌</div>
       </div>
-      
-      <div class="splash-tagline">"Walking the path of enlightenment, seeking divine wisdom"</div>
+
+      <p class="splash-tagline">"Explore the journey from a Monkey to a Yogi"</p>
       
       <div class="loading-dots">
-        <div class="loading-dot"></div>
-        <div class="loading-dot"></div>
-        <div class="loading-dot"></div>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
     </div>
   </div>
 
-  <!-- Main App -->
   <div id="root"></div>
 
-  <!-- React and ReactDOM from CDN -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- HTML5 QR Code Library -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  
-  <!-- Main Application -->
   <script>
-    // Hide splash screen after loading
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.classList.add('splash-hidden');
-        setTimeout(() => {
-          splash.style.display = 'none';
-        }, 800);
-      }, 3000); // Show splash for 3 seconds
-    });
-
     const { useState, useEffect, useRef } = React;
 
-    // Animal names for random username generation
-    const ANIMAL_NAMES = [
-      'Peacock', 'Elephant', 'Tiger', 'Lotus', 'Swan', 'Eagle', 'Dolphin', 'Deer',
-      'Lion', 'Phoenix', 'Crane', 'Turtle', 'Butterfly', 'Hummingbird', 'Owl',
-      'Falcon', 'Panda', 'Koala', 'Rabbit', 'Fox', 'Wolf', 'Bear', 'Raven', 'Dove',
-      'Hawk', 'Sparrow', 'Parrot', 'Monkey', 'Zebra', 'Giraffe', 'Cheetah', 'Gazelle'
+    const GAMES = [
+      { 
+        id: 'game1', 
+        name: 'Wheel of Fortune', 
+        qrCode: 'GAME1_WHEEL_OF_FORTUNE',
+        image: 'wheel_game.png',
+        stageName: 'Seeker',
+        stagePoints: 10,
+        gamePoints: 20,
+        maxCoins: 100
+      },
+      { 
+        id: 'game2', 
+        name: 'Memory Card Quiz', 
+        qrCode: 'GAME2_MEMORY_CARD_QUIZ',
+        image: 'memory_card.png',
+        stageName: 'Explorer',
+        stagePoints: 10,
+        gamePoints: 20,
+        maxCoins: 100
+      },
+      { 
+        id: 'game3', 
+        name: 'Paper Plane', 
+        qrCode: 'GAME3_PAPER_PLANE',
+        image: 'paper_plane.png',
+        stageName: 'Wanderer',
+        stagePoints: 10,
+        gamePoints: 15,
+        maxCoins: 100
+      },
+      { 
+        id: 'game4', 
+        name: 'Volunteer Tree Experience', 
+        qrCode: 'GAME4_VOLUNTEER_TREE',
+        image: 'volunteer_tree.png',
+        stageName: 'Yogi',
+        stagePoints: 15,
+        gamePoints: 0,
+        maxCoins: 0
+      }
     ];
 
-    // Stall configuration
-    const STALLS = [
-      { id: 'stall1', name: 'Harmony Haven', color: 'from-amber-400 to-orange-500', qrCode: 'STALL1_HARMONY_HAVEN' },
-      { id: 'stall2', name: 'Wisdom Well', color: 'from-blue-400 to-indigo-500', qrCode: 'STALL2_WISDOM_WELL' },
-      { id: 'stall3', name: 'Peace Pavilion', color: 'from-green-400 to-emerald-500', qrCode: 'STALL3_PEACE_PAVILION' },
-      { id: 'stall4', name: 'Serenity Square', color: 'from-purple-400 to-pink-500', qrCode: 'STALL4_SERENITY_SQUARE' },
-      { id: 'stall5', name: 'Bliss Bay', color: 'from-teal-400 to-cyan-500', qrCode: 'STALL5_BLISS_BAY' }
+    const CATEGORIES = [
+      'Long Term Volunteer (LTV)',
+      'Short Term Volunteer (STV)',
+      'Brahmachari',
+      'Sanyasi',
+      'Sadhanapada',
+      'Ashram Resident',
+      'Visitor Guest',
+      'Sevadhar',
+      'Staff',
+      'Admin'
     ];
 
-    // Reward tiers
-    const REWARDS = [
-      { threshold: 20, name: 'Seeker', icon: '🌱', message: 'Your journey begins' },
-      { threshold: 40, name: 'Explorer', icon: '🌿', message: 'Keep discovering' },
-      { threshold: 60, name: 'Wanderer', icon: '🌸', message: 'Halfway to enlightenment' },
-      { threshold: 80, name: 'Sage', icon: '✨', message: 'Wisdom grows within you' },
-      { threshold: 100, name: 'Master', icon: '🏆', message: 'Complete! Claim your gift!' }
-    ];
+    const ADMIN_PIN = '1234';
 
-    // Icon component wrapper
-    const Icon = ({ name, className = "w-6 h-6" }) => {
+    function Icon({ name, size = 24, className = "", strokeWidth = 2 }) {
+      const iconRef = useRef(null);
+      
       useEffect(() => {
-        lucide.createIcons();
-      }, []);
-      return React.createElement('i', { 
-        'data-lucide': name, 
-        className: className 
-      });
-    };
+        if (iconRef.current && window.lucide) {
+          const IconComponent = window.lucide[name];
+          if (IconComponent) {
+            iconRef.current.innerHTML = '';
+            const icon = IconComponent;
+            window.lucide.createElement(icon);
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', size);
+            svg.setAttribute('height', size);
+            svg.setAttribute('viewBox', '0 0 24 24');
+            svg.setAttribute('fill', 'none');
+            svg.setAttribute('stroke', 'currentColor');
+            svg.setAttribute('stroke-width', strokeWidth);
+            svg.setAttribute('stroke-linecap', 'round');
+            svg.setAttribute('stroke-linejoin', 'round');
+            svg.setAttribute('class', className);
+            iconRef.current.appendChild(svg);
+            window.lucide.createIcons({ icons: { [name]: icon }, nameAttr: 'data-lucide' });
+          }
+        }
+      }, [name, size, className, strokeWidth]);
+      
+      return React.createElement('span', { ref: iconRef, className: 'inline-flex', 'data-lucide': name });
+    }
 
-    function SpiritualGamesApp() {
-      const [view, setView] = useState('home');
-      const [username, setUsername] = useState(localStorage.getItem('username') || '');
-      const [visitedStalls, setVisitedStalls] = useState(
-        JSON.parse(localStorage.getItem('visitedStalls') || '[]')
-      );
-      const [gamePoints, setGamePoints] = useState(
-        JSON.parse(localStorage.getItem('gamePoints') || '{}')
-      );
-      const [players, setPlayers] = useState([]);
-      const [selectedStall, setSelectedStall] = useState(null);
-      const [adminPin, setAdminPin] = useState('');
+    function SevaMelaApp() {
+      const [showSplash, setShowSplash] = useState(true);
+      const [onboardingComplete, setOnboardingComplete] = useState(false);
+      const [userName, setUserName] = useState('');
+      const [userCategory, setUserCategory] = useState('');
       const [isAdmin, setIsAdmin] = useState(false);
-      const [scanAnimation, setScanAnimation] = useState(false);
-      const [showScanner, setShowScanner] = useState(false);
-      const [cameraError, setCameraError] = useState(null);
-      const [lastScannedCode, setLastScannedCode] = useState('');
-      const [scanCooldown, setScanCooldown] = useState(false);
-      const [showSuccessModal, setShowSuccessModal] = useState(false);
-      const [scannedStallInfo, setScannedStallInfo] = useState(null);
-      const scannerInstanceRef = useRef(null);
+      const [adminPinInput, setAdminPinInput] = useState('');
+      const [participants, setParticipants] = useState([]);
+      const [currentUser, setCurrentUser] = useState(null);
+      const [showLeaderboard, setShowLeaderboard] = useState(false);
+      const [showQRScanner, setShowQRScanner] = useState(false);
+      const [selectedGame, setSelectedGame] = useState(null);
+      const [successModalData, setSuccessModalData] = useState(null);
+      const [activeView, setActiveView] = useState('home');
+      const html5QrCodeRef = useRef(null);
+      const isScanning = useRef(false);
 
-      // Generate random username
-      const generateUsername = () => {
-        const randomAnimal = ANIMAL_NAMES[Math.floor(Math.random() * ANIMAL_NAMES.length)];
-        const randomNum = Math.floor(Math.random() * 900) + 100;
-        return `${randomAnimal}${randomNum}`;
-      };
-
-      // Calculate scores
-      const calculateVisitScore = (stalls) => stalls.length * 20;
-      const calculateGamePoints = (points) => Object.values(points).reduce((sum, point) => sum + point, 0);
-      const calculateCombinedScore = (visitScore, gamePointsTotal) => {
-        const maxGamePoints = 500;
-        const normalizedGameScore = Math.min((gamePointsTotal / maxGamePoints) * 100, 100);
-        return Math.round((visitScore * 0.5) + (normalizedGameScore * 0.5));
-      };
-
-      const getCurrentScore = () => {
-        const visitScore = calculateVisitScore(visitedStalls);
-        const gamePointsTotal = calculateGamePoints(gamePoints);
-        return calculateCombinedScore(visitScore, gamePointsTotal);
-      };
-
-      const getCurrentReward = () => {
-        const visitScore = calculateVisitScore(visitedStalls);
-        for (let i = REWARDS.length - 1; i >= 0; i--) {
-          if (visitScore >= REWARDS[i].threshold) return REWARDS[i];
-        }
-        return null;
-      };
-
-      // Handle QR scan
-      const handleQRScan = (decodedText) => {
-        if (!decodedText || scanCooldown) return;
-        if (decodedText === lastScannedCode) return;
-        
-        setLastScannedCode(decodedText);
-        setScanCooldown(true);
-        setTimeout(() => setScanCooldown(false), 3000);
-
-        const stall = STALLS.find(s => decodedText.includes(s.qrCode) || decodedText.includes(s.id));
-        
-        if (stall) {
-          if (!username) {
-            const newUsername = generateUsername();
-            setUsername(newUsername);
-            localStorage.setItem('username', newUsername);
-          }
-
-          if (!visitedStalls.includes(stall.id)) {
-            const newVisited = [...visitedStalls, stall.id];
-            setVisitedStalls(newVisited);
-            localStorage.setItem('visitedStalls', JSON.stringify(newVisited));
-            updatePlayersList(newVisited);
-            
-            setScannedStallInfo(stall);
-            setShowSuccessModal(true);
-            setScanAnimation(true);
-            setTimeout(() => setScanAnimation(false), 2000);
-            
-            setTimeout(() => {
-              stopScanner();
-              setShowSuccessModal(false);
-              setView('home');
-            }, 3000);
-          } else {
-            alert(`You've already visited ${stall.name}!`);
-          }
-        } else {
-          alert('Invalid QR code. Please scan a valid stall QR code.');
-        }
-      };
-
-      // Scanner functions - FIXED VERSION
-      const startScanner = async () => {
-        if (scannerInstanceRef.current) {
-          console.log('Scanner already running');
-          return;
-        }
-
-        // First set showScanner to true so the div renders
-        setShowScanner(true);
-
-        // Wait for next tick to ensure DOM is updated
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Check if element exists
-        const element = document.getElementById("qr-reader");
-        if (!element) {
-          setCameraError('Scanner initialization failed. Please try again.');
-          setShowScanner(false);
-          return;
-        }
-
-        try {
-          const html5QrCode = new Html5Qrcode("qr-reader");
-          scannerInstanceRef.current = html5QrCode;
-
-          await html5QrCode.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            handleQRScan,
-            () => {} // error handler
-          );
-          
-          setCameraError(null);
-        } catch (err) {
-          console.error('Camera error:', err);
-          setShowScanner(false);
-          scannerInstanceRef.current = null;
-          
-          if (err.name === 'NotAllowedError' || err.message?.includes('Permission')) {
-            setCameraError('Camera permission denied. Please allow camera access and try again.');
-          } else if (err.name === 'NotFoundError') {
-            setCameraError('No camera found on this device.');
-          } else {
-            setCameraError('Unable to access camera. This feature requires HTTPS. Please deploy the app to test camera scanning.');
-          }
-        }
-      };
-
-      const stopScanner = async () => {
-        if (scannerInstanceRef.current) {
-          try {
-            // Stop the scanner first
-            await scannerInstanceRef.current.stop();
-            
-            // Clear the scanner (this may throw errors, so we wrap it)
-            try {
-              // Get the element
-              const element = document.getElementById("qr-reader");
-              if (element) {
-                // Clear the innerHTML directly instead of using .clear()
-                element.innerHTML = '';
-              }
-            } catch (clearErr) {
-              console.warn('Error clearing scanner UI:', clearErr);
-            }
-            
-            scannerInstanceRef.current = null;
-          } catch (err) {
-            console.error('Error stopping scanner:', err);
-            // Force cleanup even if stop fails
-            scannerInstanceRef.current = null;
-            const element = document.getElementById("qr-reader");
-            if (element) {
-              element.innerHTML = '';
-            }
-          }
-        }
-        setShowScanner(false);
-      };
-
-      const openScanner = () => {
-        setCameraError(null);
-        setView('scanner');
-        setShowScanner(false); // Reset scanner state
-        // Don't start scanner immediately, let user click the button
-      };
-
-      // Update players list
-      const updatePlayersList = (visited = visitedStalls) => {
-        const visitScore = calculateVisitScore(visited);
-        const gamePointsTotal = calculateGamePoints(gamePoints);
-        const currentScore = calculateCombinedScore(visitScore, gamePointsTotal);
-        
-        const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
-        const playerIndex = allPlayers.findIndex(p => p.username === username);
-        
-        const playerData = {
-          username,
-          visitScore,
-          gamePoints: gamePointsTotal,
-          gamePointsDetail: gamePoints,
-          visitedStalls: visited,
-          combinedScore: currentScore,
-          timestamp: Date.now()
-        };
-
-        if (playerIndex >= 0) {
-          allPlayers[playerIndex] = playerData;
-        } else {
-          allPlayers.push(playerData);
-        }
-
-        localStorage.setItem('allPlayers', JSON.stringify(allPlayers));
-        setPlayers(allPlayers);
-      };
-
-      // Admin functions
-      const addGamePoints = (playerUsername, stallId, points) => {
-        const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
-        const playerIndex = allPlayers.findIndex(p => p.username === playerUsername);
-        
-        if (playerIndex >= 0) {
-          const player = allPlayers[playerIndex];
-          player.gamePointsDetail = player.gamePointsDetail || {};
-          player.gamePointsDetail[stallId] = points;
-          player.gamePoints = Object.values(player.gamePointsDetail).reduce((sum, p) => sum + p, 0);
-          player.combinedScore = calculateCombinedScore(player.visitScore, player.gamePoints);
-          
-          allPlayers[playerIndex] = player;
-          localStorage.setItem('allPlayers', JSON.stringify(allPlayers));
-          
-          if (player.username === username) {
-            setGamePoints(player.gamePointsDetail);
-            localStorage.setItem('gamePoints', JSON.stringify(player.gamePointsDetail));
-          }
-          
-          setPlayers([...allPlayers]);
-          alert(`Added ${points} points to ${playerUsername} for ${STALLS.find(s => s.id === stallId)?.name}`);
-        }
-      };
-
-      // Load players on mount
       useEffect(() => {
-        const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
-        setPlayers(allPlayers);
+        const savedParticipants = localStorage.getItem('sevaMelaParticipants');
+        const savedUser = localStorage.getItem('sevaMelaCurrentUser');
         
-        if (username && visitedStalls.length > 0) {
-          updatePlayersList();
+        if (savedParticipants) {
+          setParticipants(JSON.parse(savedParticipants));
+        }
+        
+        if (savedUser) {
+          const user = JSON.parse(savedUser);
+          setCurrentUser(user);
+          setUserName(user.name);
+          setUserCategory(user.category);
+          setIsAdmin(user.isAdmin);
+          setOnboardingComplete(true);
         }
       }, []);
 
-      // Auto-refresh leaderboard
       useEffect(() => {
-        if (view === 'leaderboard') {
-          const interval = setInterval(() => {
-            const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
-            setPlayers(allPlayers);
-          }, 5000);
-          return () => clearInterval(interval);
+        if (participants.length > 0) {
+          localStorage.setItem('sevaMelaParticipants', JSON.stringify(participants));
         }
-      }, [view]);
+      }, [participants]);
 
-      // Cleanup scanner on unmount or view change
       useEffect(() => {
-        if (view !== 'scanner') {
-          stopScanner();
+        if (currentUser) {
+          localStorage.setItem('sevaMelaCurrentUser', JSON.stringify(currentUser));
         }
+      }, [currentUser]);
+
+      useEffect(() => {
+        const confettiTimer = setTimeout(() => {
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }, 500);
+        
+        const timer = setTimeout(() => {
+          const splash = document.getElementById('splash-screen');
+          if (splash) {
+            splash.classList.add('splash-hidden');
+            setTimeout(() => {
+              splash.style.display = 'none';
+              setShowSplash(false);
+            }, 800);
+          }
+        }, 3000);
         
         return () => {
-          stopScanner();
+          clearTimeout(confettiTimer);
+          clearTimeout(timer);
         };
-      }, [view]);
+      }, []);
 
-      // Render functions
-      const renderHome = () => {
-        const currentReward = getCurrentReward();
-        const currentScore = getCurrentScore();
+      const handleOnboardingSubmit = () => {
+        if (userCategory === 'Admin') {
+          if (adminPinInput !== ADMIN_PIN) {
+            alert('Incorrect admin PIN');
+            return;
+          }
+          
+          const adminUser = {
+            name: 'Admin',
+            category: 'Admin',
+            isAdmin: true,
+            games: GAMES.reduce((acc, game) => ({
+              ...acc,
+              [game.id]: {
+                scanned: false,
+                stagePercent: 0,
+                coinsEarned: 0,
+                gamePercent: 0
+              }
+            }), {})
+          };
+          
+          setCurrentUser(adminUser);
+          setUserName('Admin');
+          setIsAdmin(true);
+          setOnboardingComplete(true);
+          return;
+        }
 
-        return React.createElement('div', { className: 'space-y-6' },
-          // Welcome card
-          React.createElement('div', { 
-            className: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white p-8 rounded-3xl shadow-2xl' 
-          },
-            React.createElement('div', { className: 'flex items-center gap-4 mb-4' },
-              React.createElement('div', { className: 'text-6xl' }, '🕉️'),
+        if (!userName.trim() || !userCategory) {
+          alert('Please enter your name and select a category');
+          return;
+        }
+
+        const trimmedName = userName.trim();
+        const existingUser = participants.find(p => 
+          p.name === trimmedName && p.category === userCategory
+        );
+        
+        if (existingUser) {
+          const result = confirm(
+            `Welcome back, ${trimmedName}!\n\n` +
+            `A user with name "${trimmedName}" and category "${userCategory}" already exists.\n\n` +
+            `Click OK to continue with your existing account\n` +
+            `Click Cancel to choose a different name`
+          );
+          
+          if (result) {
+            setCurrentUser(existingUser);
+            setUserName(existingUser.name);
+            setIsAdmin(existingUser.isAdmin);
+            setOnboardingComplete(true);
+          }
+          return;
+        }
+        
+        const nameExistsElsewhere = participants.find(p => 
+          p.name.toLowerCase() === trimmedName.toLowerCase() && p.category !== userCategory
+        );
+        
+        if (nameExistsElsewhere) {
+          const result = confirm(
+            `Note: "${trimmedName}" is already used by someone in ${nameExistsElsewhere.category} category.\n\n` +
+            `You can still use "${trimmedName}" for ${userCategory} category.\n\n` +
+            `Click OK to continue with "${trimmedName}"\n` +
+            `Click Cancel to choose a different name`
+          );
+          
+          if (result) {
+            createNewUser(trimmedName);
+          }
+          return;
+        }
+        
+        const similarNames = participants.filter(p => 
+          p.category === userCategory && (
+            p.name.toLowerCase() === trimmedName.toLowerCase() ||
+            p.name.toLowerCase().startsWith(trimmedName.toLowerCase() + ' ')
+          )
+        );
+        
+        if (similarNames.length > 0) {
+          let counter = 1;
+          let suggestedName = `${trimmedName} ${counter}`;
+          while (participants.find(p => p.name === suggestedName && p.category === userCategory)) {
+            counter++;
+            suggestedName = `${trimmedName} ${counter}`;
+          }
+          
+          const result = confirm(
+            `The name "${trimmedName}" or similar is already taken in ${userCategory} category.\n\n` +
+            `Existing: ${similarNames.map(p => p.name).join(', ')}\n\n` +
+            `Would you like to use "${suggestedName}" instead?\n\n` +
+            `Click OK to use "${suggestedName}"\n` +
+            `Click Cancel to choose a different name`
+          );
+          
+          if (result) {
+            createNewUser(suggestedName);
+          }
+          return;
+        }
+        
+        createNewUser(trimmedName);
+      };
+
+      const createNewUser = (finalName) => {
+        const newUser = {
+          name: finalName,
+          category: userCategory,
+          isAdmin: false,
+          games: GAMES.reduce((acc, game) => ({
+            ...acc,
+            [game.id]: {
+              scanned: false,
+              stagePercent: 0,
+              coinsEarned: 0,
+              gamePercent: 0
+            }
+          }), {})
+        };
+
+        const updatedParticipants = [...participants, newUser];
+        setParticipants(updatedParticipants);
+        setCurrentUser(newUser);
+        setUserName(finalName);
+        setIsAdmin(false);
+        setOnboardingComplete(true);
+      };
+
+      const calculateProgress = () => {
+        if (!currentUser || isAdmin) return 0;
+        
+        let totalPercent = 0;
+        GAMES.forEach(game => {
+          const gameData = currentUser.games[game.id];
+          if (gameData) {
+            totalPercent += (gameData.stagePercent || 0) + (gameData.gamePercent || 0);
+          }
+        });
+        
+        return Math.min(100, Math.round(totalPercent));
+      };
+
+      const handleQRScan = (decodedText) => {
+        console.log('QR Scanned:', decodedText);
+        
+        if (isAdmin) {
+          alert('Admin users cannot scan QR codes');
+          return;
+        }
+
+        const matchedGame = GAMES.find(g => decodedText.includes(g.qrCode) || decodedText.includes(g.id));
+        
+        if (matchedGame) {
+          if (html5QrCodeRef.current && isScanning.current) {
+            html5QrCodeRef.current.stop().then(() => {
+              isScanning.current = false;
+              setShowQRScanner(false);
+            }).catch(err => console.error(err));
+          } else {
+            setShowQRScanner(false);
+          }
+
+          const currentGameData = currentUser.games[matchedGame.id];
+          if (currentGameData.scanned) {
+            alert(`You've already scanned ${matchedGame.name}! Move on to the next game.`);
+            return;
+          }
+
+          const updatedUser = {
+            ...currentUser,
+            games: {
+              ...currentUser.games,
+              [matchedGame.id]: {
+                ...currentGameData,
+                scanned: true,
+                stagePercent: matchedGame.stagePoints
+              }
+            }
+          };
+
+          setCurrentUser(updatedUser);
+          
+          const updatedParticipants = participants.map(p => 
+            p.name === currentUser.name && p.category === currentUser.category ? updatedUser : p
+          );
+          setParticipants(updatedParticipants);
+
+          const scannedCount = Object.values(updatedUser.games).filter(g => g.scanned).length;
+          let totalPercent = 0;
+          GAMES.forEach(game => {
+            const gData = updatedUser.games[game.id];
+            totalPercent += (gData.stagePercent || 0) + (gData.gamePercent || 0);
+          });
+
+          setSuccessModalData({
+            game: matchedGame,
+            scannedCount,
+            totalProgress: Math.min(100, Math.round(totalPercent))
+          });
+
+          confetti({
+            particleCount: 200,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#fbbf24']
+          });
+
+          setTimeout(() => {
+            setSuccessModalData(null);
+          }, 2500);
+        } else {
+          alert('Invalid QR code. Please scan a valid game QR code.');
+        }
+      };
+
+      const startQRScanner = () => {
+        setShowQRScanner(true);
+        
+        setTimeout(() => {
+          const qrReaderElement = document.getElementById('qr-reader');
+          if (!qrReaderElement) {
+            console.error('QR reader element not found');
+            return;
+          }
+
+          if (!html5QrCodeRef.current) {
+            html5QrCodeRef.current = new Html5Qrcode("qr-reader");
+          }
+
+          if (!isScanning.current) {
+            html5QrCodeRef.current.start(
+              { facingMode: "environment" },
+              {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+              },
+              handleQRScan,
+              (errorMessage) => {}
+            ).then(() => {
+              isScanning.current = true;
+            }).catch(err => {
+              console.error('Camera start error:', err);
+              alert('Camera permission denied or not available. Please check settings.');
+            });
+          }
+        }, 100);
+      };
+
+      const stopQRScanner = () => {
+        if (html5QrCodeRef.current && isScanning.current) {
+          html5QrCodeRef.current.stop().then(() => {
+            isScanning.current = false;
+            setShowQRScanner(false);
+          }).catch(err => console.error(err));
+        } else {
+          setShowQRScanner(false);
+        }
+      };
+
+      const awardGamePoints = (participantName, participantCategory, gameId, coins) => {
+        const game = GAMES.find(g => g.id === gameId);
+        
+        if (coins < 0 || coins > game.maxCoins) {
+          alert(`Coins must be between 0 and ${game.maxCoins}`);
+          return false;
+        }
+
+        const gamePercent = game.maxCoins > 0 ? Math.round((coins / game.maxCoins) * game.gamePoints) : 0;
+
+        const updatedParticipants = participants.map(p => {
+          if (p.name === participantName && p.category === participantCategory) {
+            return {
+              ...p,
+              games: {
+                ...p.games,
+                [gameId]: {
+                  ...p.games[gameId],
+                  coinsEarned: coins,
+                  gamePercent: gamePercent
+                }
+              }
+            };
+          }
+          return p;
+        });
+
+        setParticipants(updatedParticipants);
+        
+        confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#fbbf24']
+        });
+
+        if (currentUser && currentUser.name === participantName && currentUser.category === participantCategory) {
+          const updatedUser = updatedParticipants.find(p => p.name === participantName && p.category === participantCategory);
+          setCurrentUser(updatedUser);
+        }
+
+        return true;
+      };
+
+      const getLeaderboard = () => {
+        const sorted = participants
+          .filter(p => !p.isAdmin)
+          .map(p => {
+            let totalPercent = 0;
+            GAMES.forEach(game => {
+              const gameData = p.games[game.id];
+              totalPercent += gameData.stagePercent + gameData.gamePercent;
+            });
+            
+            return {
+              name: p.name,
+              category: p.category,
+              totalPercentage: Math.min(100, Math.round(totalPercent))
+            };
+          })
+          .sort((a, b) => b.totalPercentage - a.totalPercentage);
+        
+        let currentRank = 1;
+        return sorted.map((player, index) => {
+          if (index > 0 && sorted[index - 1].totalPercentage !== player.totalPercentage) {
+            currentRank = index + 1;
+          }
+          return { ...player, rank: currentRank };
+        });
+      };
+
+      const handleRefresh = () => {
+        const savedParticipants = localStorage.getItem('sevaMelaParticipants');
+        const savedUser = localStorage.getItem('sevaMelaCurrentUser');
+        
+        if (savedParticipants) {
+          setParticipants(JSON.parse(savedParticipants));
+        }
+        
+        if (savedUser) {
+          setCurrentUser(JSON.parse(savedUser));
+        }
+        
+        alert('Data refreshed!');
+      };
+
+      const deletePlayer = (playerName, playerCategory) => {
+        if (!isAdmin) {
+          alert('Only admins can delete players');
+          return;
+        }
+
+        const result = confirm(`Delete ${playerName} (${playerCategory}) from the system?`);
+        if (result) {
+          const updatedParticipants = participants.filter(
+            p => !(p.name === playerName && p.category === playerCategory)
+          );
+          setParticipants(updatedParticipants);
+          alert('Player deleted successfully!');
+        }
+      };
+
+      const getScoreTableData = () => {
+        return participants
+          .filter(p => !p.isAdmin)
+          .map(p => {
+            const gameScores = GAMES.map(game => ({
+              gameId: game.id,
+              gameName: game.name,
+              gamePercent: p.games[game.id]?.gamePercent || 0,
+              stagePercent: p.games[game.id]?.stagePercent || 0,
+              scanned: p.games[game.id]?.scanned || false
+            }));
+            
+            const totalPoints = gameScores.reduce(
+              (sum, g) => sum + g.gamePercent + g.stagePercent,
+              0
+            );
+
+            return {
+              ...p,
+              gameScores,
+              totalPoints: Math.min(100, Math.round(totalPoints))
+            };
+          })
+          .sort((a, b) => b.totalPoints - a.totalPoints);
+      };
+
+      if (!onboardingComplete) {
+        return React.createElement('div', { className: "min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-orange-50 to-blue-50" },
+          React.createElement('div', { className: "bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md border-2 border-orange-500" },
+            React.createElement('div', { className: "text-center mb-8" },
+              React.createElement('h2', { className: "text-3xl font-bold text-gray-800 mb-2" }, 'Welcome!'),
+              React.createElement('p', { className: "text-gray-600" }, 'Seva Mela - VCD Department')
+            ),
+            
+            React.createElement('div', { className: "space-y-6" },
+              userCategory !== 'Admin' && React.createElement('div', null,
+                React.createElement('label', { className: "block text-sm font-bold text-gray-700 mb-2" }, 'Your Name'),
+                React.createElement('input', {
+                  type: "text",
+                  value: userName,
+                  onChange: (e) => setUserName(e.target.value),
+                  placeholder: "Enter your name",
+                  className: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 transition-all"
+                })
+              ),
+
               React.createElement('div', null,
-                React.createElement('h1', { className: 'text-3xl font-bold' }, 'Divine Games'),
-                React.createElement('p', { className: 'text-amber-100' }, 'Journey through the Five Realms')
+                React.createElement('label', { className: "block text-sm font-bold text-gray-700 mb-2" }, 'Category'),
+                React.createElement('select', {
+                  value: userCategory,
+                  onChange: (e) => {
+                    setUserCategory(e.target.value);
+                    setAdminPinInput('');
+                  },
+                  className: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-orange-500 transition-all"
+                },
+                  React.createElement('option', { value: "" }, 'Select your category...'),
+                  CATEGORIES.map(cat =>
+                    React.createElement('option', { key: cat, value: cat }, cat)
+                  )
+                )
+              ),
+
+              userCategory === 'Admin' && React.createElement('div', { className: "bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4" },
+                React.createElement('label', { className: "block text-sm font-bold text-yellow-800 mb-2" }, 'Admin PIN Required'),
+                React.createElement('input', {
+                  type: "password",
+                  value: adminPinInput,
+                  onChange: (e) => setAdminPinInput(e.target.value),
+                  placeholder: "Enter admin PIN",
+                  className: "w-full px-4 py-3 border-2 border-yellow-300 rounded-xl focus:outline-none focus:border-yellow-500"
+                })
+              ),
+
+              React.createElement('button', {
+                onClick: handleOnboardingSubmit,
+                className: "w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-lg"
+              }, 'Start Journey')
+            )
+          )
+        );
+      }
+
+      const progress = calculateProgress();
+      const leaderboard = getLeaderboard();
+      const currentUserRank = leaderboard.findIndex(l => l.name === currentUser?.name && l.category === currentUser?.category) + 1;
+
+      return React.createElement('div', { className: "min-h-screen bg-gray-50" },
+        // Simple header
+        React.createElement('div', { className: "bg-white border-b border-gray-200 p-4 sticky top-0 z-50 shadow-sm" },
+          React.createElement('div', { className: "flex items-center justify-between max-w-7xl mx-auto" },
+            React.createElement('div', { className: "flex items-center gap-3" },
+              React.createElement('h1', { className: "text-xl font-bold text-gray-800" }, 'Seva Mela'),
+              isAdmin && React.createElement('span', { 
+                className: "text-xs bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700 border border-gray-300" 
+              }, 'Admin')
+            ),
+            !isAdmin && React.createElement('div', { className: "flex items-center gap-2" },
+              React.createElement('div', { className: "text-right" },
+                React.createElement('div', { className: "text-xs text-gray-500" }, currentUser?.category),
+                React.createElement('div', { className: "text-sm font-bold text-gray-800" }, currentUser?.name)
+              )
+            )
+          ),
+          
+          // Progress bar
+          !isAdmin && React.createElement('div', { className: "mt-4 max-w-7xl mx-auto" },
+            React.createElement('div', { className: "flex items-center justify-between mb-2" },
+              React.createElement('span', { className: "text-sm font-bold text-gray-700" }, 'Progress'),
+              React.createElement('span', { className: "text-sm font-bold text-orange-600" }, `${progress}%`)
+            ),
+            React.createElement('div', { className: "progress-bar-container" },
+              React.createElement('div', {
+                className: "progress-fill",
+                style: { width: `${progress}%` }
+              })
+            )
+          )
+        ),
+
+        // Main Content
+        React.createElement('div', { className: "p-4 max-w-7xl mx-auto pb-24" },
+          activeView === 'scores' && isAdmin ? React.createElement('div', null,
+            React.createElement('div', { className: "flex items-center justify-between mb-4" },
+              React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, 'Player Scores'),
+              React.createElement('button', {
+                onClick: handleRefresh,
+                className: "flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+              },
+                React.createElement(Icon, { name: 'RotateCw', size: 16 }),
+                'Refresh Scores'
               )
             ),
-            username && React.createElement('div', { className: 'bg-white/20 backdrop-blur-sm rounded-xl p-4 mt-6' },
-              React.createElement('p', { className: 'text-sm text-amber-100' }, 'Your Spirit Name'),
-              React.createElement('p', { className: 'text-2xl font-bold' }, username)
-            )
-          ),
-
-          // Progress card
-          username && React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
-            React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-4' }, 'Your Progress'),
-            React.createElement('div', { className: 'space-y-4' },
-              React.createElement('div', null,
-                React.createElement('div', { className: 'flex justify-between text-sm text-gray-600 mb-2' },
-                  React.createElement('span', null, 'Combined Score'),
-                  React.createElement('span', { className: 'font-bold text-amber-600' }, `${currentScore}%`)
-                ),
-                React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-3' },
-                  React.createElement('div', {
-                    className: 'bg-gradient-to-r from-amber-500 to-orange-600 h-3 rounded-full transition-all duration-500',
-                    style: { width: `${currentScore}%` }
-                  })
+            React.createElement('div', { className: "bg-white rounded-2xl shadow-sm border border-gray-200 p-6" },
+              getScoreTableData().length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
+                React.createElement('p', null, 'No players yet')
+              ) : React.createElement('div', { className: "score-table-container" },
+                React.createElement('table', { className: "score-table" },
+                  React.createElement('thead', null,
+                    React.createElement('tr', null,
+                      React.createElement('th', null, 'Player'),
+                      React.createElement('th', null, 'Category'),
+                      GAMES.map(game => 
+                        React.createElement('th', { key: game.id, className: "text-center" }, game.name.substring(0, 6))
+                      ),
+                      React.createElement('th', { className: "text-center" }, 'Total')
+                    )
+                  ),
+                  React.createElement('tbody', null,
+                    getScoreTableData().map(player =>
+                      React.createElement('tr', { key: `${player.name}-${player.category}` },
+                        React.createElement('td', { className: "font-bold text-gray-800" }, player.name),
+                        React.createElement('td', { className: "text-gray-600 text-sm" }, player.category),
+                        player.gameScores.map(score =>
+                          React.createElement('td', { key: score.gameId, className: "text-center text-xs" },
+                            score.scanned 
+                              ? React.createElement('div', { 
+                                  className: score.gamePercent > 0 ? 'text-green-600 font-bold' : 'text-orange-600 font-bold'
+                                },
+                                  score.gamePercent > 0 && `G:${score.gamePercent}%`,
+                                  score.gamePercent > 0 && React.createElement('br'),
+                                  `S:${score.stagePercent}%`
+                                )
+                              : React.createElement('span', { className: 'text-gray-400' }, '-')
+                          )
+                        ),
+                        React.createElement('td', { className: "text-center font-bold text-orange-600 text-lg" }, `${player.totalPoints}%`)
+                      )
+                    )
+                  )
                 )
-              ),
-              React.createElement('div', { className: 'grid grid-cols-2 gap-4' },
-                React.createElement('div', { className: 'bg-amber-50 p-4 rounded-xl' },
-                  React.createElement('p', { className: 'text-xs text-gray-600' }, 'Stalls Visited'),
-                  React.createElement('p', { className: 'text-2xl font-bold text-amber-600' }, `${visitedStalls.length}/5`)
-                ),
-                React.createElement('div', { className: 'bg-orange-50 p-4 rounded-xl' },
-                  React.createElement('p', { className: 'text-xs text-gray-600' }, 'Game Points'),
-                  React.createElement('p', { className: 'text-2xl font-bold text-orange-600' }, calculateGamePoints(gamePoints))
-                )
-              ),
-              currentReward && React.createElement('div', { 
-                className: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white p-4 rounded-xl text-center' 
-              },
-                React.createElement('div', { className: 'text-3xl mb-2' }, currentReward.icon),
-                React.createElement('p', { className: 'font-bold text-lg' }, currentReward.name),
-                React.createElement('p', { className: 'text-sm text-amber-100' }, currentReward.message)
               )
             )
-          ),
+          ) : React.createElement('div', null,
+            // Stats section for users
+            !isAdmin && React.createElement('div', { className: "mb-6 grid grid-cols-2 gap-3" },
+              React.createElement('div', { className: "stat-badge" },
+                React.createElement(Icon, { name: 'Target', size: 20, className: 'text-orange-600' }),
+                React.createElement('div', null,
+                  React.createElement('div', { className: "text-xs text-gray-500" }, 'Score'),
+                  React.createElement('div', { className: "stat-value text-orange-600" }, `${progress}%`)
+                )
+              ),
+              currentUserRank > 0 && React.createElement('div', { className: "stat-badge" },
+                React.createElement(Icon, { name: 'Trophy', size: 20, className: 'text-blue-600' }),
+                React.createElement('div', null,
+                  React.createElement('div', { className: "text-xs text-gray-500" }, 'Rank'),
+                  React.createElement('div', { className: "stat-value text-blue-600" }, `#${currentUserRank}`)
+                )
+              )
+            ),
 
-          // Stalls list
-          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
-            React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-4' }, 'The Five Realms'),
-            React.createElement('div', { className: 'space-y-3' },
-              STALLS.map((stall, index) => {
-                const visited = visitedStalls.includes(stall.id);
-                const points = gamePoints[stall.id] || 0;
-                
+            isAdmin && React.createElement('div', { className: "flex items-center justify-between mb-4" },
+              React.createElement('div', null),
+              React.createElement('button', {
+                onClick: handleRefresh,
+                className: "flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
+              },
+                React.createElement(Icon, { name: 'RotateCw', size: 16 }),
+                'Refresh Scores'
+              )
+            ),
+
+            // Game cards
+            React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4" },
+              GAMES.map(game => {
+                const gameData = currentUser?.games?.[game.id];
+                const currentStage = gameData?.scanned ? game.stageName : 'Not Started';
+                const pendingPlayers = isAdmin ? participants.filter(p => 
+                  !p.isAdmin && 
+                  p.games[game.id]?.scanned && 
+                  game.gamePoints > 0 && 
+                  p.games[game.id]?.coinsEarned === 0
+                ) : [];
+
                 return React.createElement('div', {
-                  key: stall.id,
-                  className: `p-4 rounded-xl border-2 ${visited ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-gray-50'}`
+                  key: game.id,
+                  className: `game-card ${isAdmin ? 'cursor-pointer' : ''}`,
+                  onClick: () => isAdmin && setSelectedGame(game)
                 },
-                  React.createElement('div', { className: 'flex items-center justify-between' },
-                    React.createElement('div', { className: 'flex items-center gap-3' },
-                      React.createElement('div', { 
-                        className: `w-10 h-10 rounded-full bg-gradient-to-r ${stall.color} flex items-center justify-center text-white font-bold` 
-                      }, index + 1),
+                  React.createElement('img', {
+                    src: game.image,
+                    alt: game.name,
+                    className: 'game-card-image',
+                    onError: (e) => {
+                      e.target.style.display = 'none';
+                    }
+                  }),
+                  
+                  React.createElement('div', { className: "p-4" },
+                    React.createElement('div', { className: "flex items-start justify-between mb-3" },
                       React.createElement('div', null,
-                        React.createElement('p', { className: 'font-bold text-gray-800' }, stall.name),
-                        visited && React.createElement('p', { className: 'text-sm text-gray-600' }, `Game Points: ${points}`)
+                        React.createElement('h3', { className: "font-bold text-lg text-gray-800 mb-1" }, game.name),
+                        React.createElement('p', { className: "text-sm text-gray-500" }, currentStage)
+                      ),
+                      gameData?.scanned && !isAdmin && React.createElement('div', { 
+                        className: "flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold" 
+                      },
+                        React.createElement(Icon, { name: 'Check', size: 14 }),
+                        'Done'
                       )
                     ),
-                    visited ? 
-                      React.createElement('span', { className: 'text-2xl' }, '✅') :
-                      React.createElement('span', { className: 'text-2xl' }, '⭕')
+
+                    !isAdmin ? React.createElement('div', { className: "space-y-2" },
+                      game.gamePoints > 0 && React.createElement('div', { className: "flex items-center justify-between text-sm" },
+                        React.createElement('span', { className: "text-gray-600" }, 'Game Points'),
+                        React.createElement('span', { className: "font-bold text-blue-600" }, `${gameData?.gamePercent || 0}%`)
+                      ),
+                      React.createElement('div', { className: "flex items-center justify-between text-sm" },
+                        React.createElement('span', { className: "text-gray-600" }, 'Stage Points'),
+                        React.createElement('span', { className: "font-bold text-orange-600" }, `${gameData?.stagePercent || 0}%`)
+                      )
+                    ) : React.createElement('div', { className: "flex items-center justify-between" },
+                      React.createElement('span', { className: "text-sm text-gray-600" }, 'Pending'),
+                      React.createElement('span', { 
+                        className: `font-bold text-lg ${pendingPlayers.length > 0 ? 'text-red-600' : 'text-gray-400'}` 
+                      }, pendingPlayers.length)
+                    )
                   )
                 );
               })
             )
-          ),
-
-          // Action button
-          React.createElement('button', {
-            onClick: openScanner,
-            className: 'scan-button w-full'
-          }, 
-            '📱 Start Your Journey'
           )
-        );
-      };
+        ),
 
-      const renderScanner = () => {
-        return React.createElement('div', { className: 'space-y-6' },
-          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
-            React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2' },
-              React.createElement(Icon, { name: 'scan' }),
-              'Scan QR Code'
-            ),
-            
-            !showScanner ? (
-              React.createElement('div', { className: 'text-center py-8' },
-                React.createElement('div', { className: 'text-6xl mb-4' }, '📱'),
-                React.createElement('p', { className: 'text-gray-600 mb-6' }, 'Point your camera at the QR code at any stall'),
-                React.createElement('button', {
-                  onClick: startScanner,
-                  className: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-transform'
-                }, 'Open Camera')
-              )
-            ) : (
-              React.createElement('div', null,
-                React.createElement('div', { 
-                  id: 'qr-reader',
-                  className: 'rounded-xl overflow-hidden'
-                }),
-                React.createElement('button', {
-                  onClick: stopScanner,
-                  className: 'w-full mt-4 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition-colors'
-                }, 'Close Camera')
-              )
-            ),
-
-            cameraError && React.createElement('div', { 
-              className: 'mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700' 
-            },
-              React.createElement('p', { className: 'font-bold mb-2' }, '⚠️ Camera Error'),
-              React.createElement('p', { className: 'text-sm' }, cameraError),
-              cameraError.includes('HTTPS') && React.createElement('div', { className: 'mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg' },
-                React.createElement('p', { className: 'text-sm text-amber-800 font-bold mb-2' }, '💡 How to fix:'),
-                React.createElement('p', { className: 'text-sm text-amber-700' }, '1. Deploy this app to Netlify, Vercel, or similar'),
-                React.createElement('p', { className: 'text-sm text-amber-700' }, '2. Access via HTTPS URL'),
-                React.createElement('p', { className: 'text-sm text-amber-700' }, '3. Camera will work automatically!')
-              )
-            )
-          )
-        );
-      };
-
-      const renderLeaderboard = () => {
-        const sortedPlayers = [...players].sort((a, b) => b.combinedScore - a.combinedScore);
-
-        return React.createElement('div', { className: 'space-y-6' },
-          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
-            React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2' },
-              React.createElement(Icon, { name: 'trophy' }),
-              'Leaderboard'
-            ),
-            
-            sortedPlayers.length === 0 ? (
-              React.createElement('div', { className: 'text-center py-12' },
-                React.createElement('div', { className: 'text-6xl mb-4' }, '🏆'),
-                React.createElement('p', { className: 'text-gray-500' }, 'No players yet. Be the first to start your journey!')
-              )
-            ) : (
-              React.createElement('div', { className: 'space-y-3' },
-                sortedPlayers.map((player, index) => {
-                  const isCurrentUser = player.username === username;
-                  const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-                  
-                  return React.createElement('div', {
-                    key: player.username,
-                    className: `p-4 rounded-xl border-2 transition-all ${
-                      isCurrentUser 
-                        ? 'border-amber-400 bg-amber-50 shadow-lg scale-105' 
-                        : 'border-gray-200 bg-white'
-                    }`
-                  },
-                    React.createElement('div', { className: 'flex items-center justify-between' },
-                      React.createElement('div', { className: 'flex items-center gap-3' },
-                        React.createElement('div', { 
-                          className: `w-10 h-10 rounded-full ${
-                            index < 3 
-                              ? 'bg-gradient-to-r from-amber-400 to-orange-500' 
-                              : 'bg-gray-300'
-                          } flex items-center justify-center text-white font-bold` 
-                        }, medal || (index + 1)),
-                        React.createElement('div', null,
-                          React.createElement('p', { 
-                            className: `font-bold ${isCurrentUser ? 'text-amber-700' : 'text-gray-800'}` 
-                          }, 
-                            player.username,
-                            isCurrentUser && React.createElement('span', { className: 'ml-2 text-sm' }, '(You)')
-                          ),
-                          React.createElement('p', { className: 'text-sm text-gray-600' }, 
-                            `${player.visitedStalls.length}/5 stalls · ${player.gamePoints} game points`
-                          )
-                        )
-                      ),
-                      React.createElement('div', { className: 'text-right' },
-                        React.createElement('p', { 
-                          className: `text-2xl font-bold ${
-                            isCurrentUser ? 'text-amber-600' : 'text-gray-700'
-                          }` 
-                        }, `${player.combinedScore}%`)
-                      )
-                    )
-                  );
-                })
-              )
-            ),
-            
-            React.createElement('div', { className: 'mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-500' },
-              React.createElement('p', null, '🔄 Leaderboard updates every 5 seconds'),
-              React.createElement('p', { className: 'mt-1' }, `Last updated: ${new Date().toLocaleTimeString()}`)
-            )
-          )
-        );
-      };
-
-      const renderAdmin = () => {
-        if (!isAdmin) {
-          return React.createElement('div', { className: 'space-y-6' },
-            React.createElement('div', { className: 'bg-white rounded-2xl p-8 shadow-lg' },
-              React.createElement('div', { className: 'text-center mb-6' },
-                React.createElement('div', { className: 'text-6xl mb-4' }, '🔐'),
-                React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, 'Admin Access')
+        // Success Modal
+        successModalData && React.createElement('div', { className: "modal-backdrop" },
+          React.createElement('div', { className: "success-modal" },
+            React.createElement('div', { className: "text-center" },
+              React.createElement('div', { className: "success-checkmark" },
+                React.createElement(Icon, { name: 'Check', size: 48, className: 'text-white', strokeWidth: 3 })
               ),
-              React.createElement('input', {
-                type: 'password',
-                placeholder: 'Enter Admin PIN',
-                value: adminPin,
-                onChange: (e) => setAdminPin(e.target.value),
-                className: 'w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-amber-500 mb-4'
-              }),
-              React.createElement('button', {
-                onClick: () => {
-                  if (adminPin === '1234') {
-                    setIsAdmin(true);
-                  } else {
-                    alert('Incorrect PIN');
-                  }
-                },
-                className: 'w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition-transform'
-              }, 'Login')
-            )
-          );
-        }
-
-        const stallPlayers = selectedStall 
-          ? players.filter(p => p.visitedStalls.includes(selectedStall))
-          : [];
-
-        return React.createElement('div', { className: 'space-y-6' },
-          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
-            React.createElement('div', { className: 'flex justify-between items-center mb-6' },
-              React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 flex items-center gap-2' },
-                React.createElement(Icon, { name: 'shield' }),
-                'Admin Panel'
+              React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-2" }, 'Success!'),
+              React.createElement('p', { className: "text-lg text-gray-600 mb-4" },
+                successModalData.game.name
               ),
+              React.createElement('div', { className: "bg-orange-50 rounded-xl p-4 mb-4 border border-orange-200" },
+                React.createElement('div', { className: "text-sm text-gray-600 mb-1" },
+                  `Stage ${successModalData.scannedCount} of ${GAMES.length}`
+                ),
+                React.createElement('div', { className: "text-3xl font-bold text-orange-600" },
+                  `${successModalData.totalProgress}%`
+                )
+              ),
+              React.createElement('p', { className: "text-sm text-gray-500" },
+                successModalData.scannedCount === GAMES.length 
+                  ? 'All activities completed!' 
+                  : 'Keep going!'
+              )
+            )
+          )
+        ),
+
+        // QR Scanner Modal
+        showQRScanner && React.createElement('div', { className: "modal-backdrop", onClick: stopQRScanner },
+          React.createElement('div', {
+            className: "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md z-9999",
+            onClick: (e) => e.stopPropagation()
+          },
+            React.createElement('div', { className: "flex justify-between items-center mb-4" },
+              React.createElement('h3', { className: "text-xl font-bold text-gray-800" }, 'Scan QR Code'),
               React.createElement('button', {
-                onClick: () => {
-                  setIsAdmin(false);
-                  setAdminPin('');
-                },
-                className: 'text-red-500 font-bold'
-              }, 'Logout')
-            ),
-            
-            React.createElement('div', { className: 'mb-6' },
-              React.createElement('label', { className: 'block text-sm font-bold text-gray-700 mb-2' }, 'Select Stall'),
-              React.createElement('select', {
-                value: selectedStall || '',
-                onChange: (e) => setSelectedStall(e.target.value),
-                className: 'w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-amber-500'
+                onClick: stopQRScanner,
+                className: "text-gray-400 hover:text-gray-600"
               },
-                React.createElement('option', { value: '' }, 'Choose a stall...'),
-                STALLS.map(stall => 
-                  React.createElement('option', { key: stall.id, value: stall.id }, stall.name)
+                React.createElement(Icon, { name: 'X', size: 24 })
+              )
+            ),
+            React.createElement('div', { id: "qr-reader", className: "mb-4 rounded-xl overflow-hidden" }),
+            React.createElement('p', { className: "text-sm text-gray-600 text-center" }, 'Position the QR code within the frame')
+          )
+        ),
+
+        // Leaderboard
+        showLeaderboard && React.createElement('div', { className: "modal-backdrop", onClick: () => setShowLeaderboard(false) },
+          React.createElement('div', {
+            className: "leaderboard-slide p-6",
+            onClick: (e) => e.stopPropagation()
+          },
+            React.createElement('div', { className: "flex justify-between items-center mb-6" },
+              React.createElement('h3', { className: "text-2xl font-bold text-gray-800 flex items-center gap-2" },
+                React.createElement(Icon, { name: 'Trophy', size: 28, className: 'text-orange-600' }),
+                'Leaderboard'
+              ),
+              React.createElement('button', {
+                onClick: () => setShowLeaderboard(false),
+                className: "text-gray-400 hover:text-gray-600"
+              },
+                React.createElement(Icon, { name: 'X', size: 24 })
+              )
+            ),
+
+            !isAdmin && currentUserRank > 0 && React.createElement('div', { className: "bg-gradient-to-r from-orange-50 to-blue-50 border-2 border-orange-400 rounded-xl p-4 mb-6" },
+              React.createElement('div', { className: "flex justify-between items-center" },
+                React.createElement('div', null,
+                  React.createElement('div', { className: "font-bold text-gray-800" }, `${currentUser.name}`),
+                  React.createElement('div', { className: "text-sm text-gray-600" }, `${currentUser.category}`)
+                ),
+                React.createElement('div', { className: "text-right" },
+                  React.createElement('div', { className: "text-3xl font-bold text-orange-600" }, `${progress}%`),
+                  React.createElement('div', { className: "text-xs text-gray-600" }, `Rank #${currentUserRank}`)
                 )
               )
             ),
 
-            selectedStall && (
-              React.createElement('div', null,
-                React.createElement('h3', { className: 'font-bold text-lg text-gray-800 mb-4' }, 
-                  `Players at ${STALLS.find(s => s.id === selectedStall)?.name}`
-                ),
-                
-                stallPlayers.length === 0 ? (
-                  React.createElement('p', { className: 'text-center text-gray-500 py-8' }, 'No players have visited this stall yet')
-                ) : (
-                  React.createElement('div', { className: 'space-y-3' },
-                    stallPlayers.map(player => 
-                      React.createElement('div', {
-                        key: player.username,
-                        className: 'p-4 bg-gray-50 rounded-xl border border-gray-200'
+            leaderboard.length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-12" },
+              React.createElement('p', null, 'No participants yet')
+            ) : React.createElement('div', { className: "space-y-3" },
+              leaderboard.map((player) =>
+                React.createElement('div', {
+                  key: `${player.name}-${player.category}`,
+                  className: `p-4 rounded-xl border-2 ${
+                    player.rank <= 3 ? 'bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-400' : 'bg-white border-gray-200'
+                  }`
+                },
+                  React.createElement('div', { className: "flex justify-between items-center" },
+                    React.createElement('div', { className: "flex items-center gap-3" },
+                      React.createElement('div', { className: "w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-700" },
+                        `#${player.rank}`
+                      ),
+                      React.createElement('div', null,
+                        React.createElement('div', { className: "font-bold text-gray-800" }, player.name),
+                        React.createElement('div', { className: "text-xs text-gray-600" }, player.category)
+                      )
+                    ),
+                    React.createElement('div', { className: "flex items-center gap-3" },
+                      React.createElement('div', { className: "text-2xl font-bold text-orange-600" }, `${player.totalPercentage}%`),
+                      isAdmin && React.createElement('button', {
+                        onClick: (e) => {
+                          e.stopPropagation();
+                          deletePlayer(player.name, player.category);
+                        },
+                        className: "p-2 text-red-500 hover:bg-red-50 rounded-lg transition-all"
                       },
-                        React.createElement('div', { className: 'flex justify-between items-center mb-3' },
-                          React.createElement('p', { className: 'font-bold text-gray-800' }, player.username),
-                          React.createElement('p', { className: 'text-sm text-gray-600' }, 
-                            `Current: ${player.gamePointsDetail?.[selectedStall] || 0} pts`
-                          )
-                        ),
-                        React.createElement('div', { className: 'flex gap-2' },
-                          [0, 20, 40, 60, 80, 100].map(points => 
-                            React.createElement('button', {
-                              key: points,
-                              onClick: () => addGamePoints(player.username, selectedStall, points),
-                              className: `flex-1 py-2 rounded-lg font-bold transition-all ${
-                                (player.gamePointsDetail?.[selectedStall] || 0) === points
-                                  ? 'bg-amber-500 text-white'
-                                  : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-amber-500'
-                              }`
-                            }, points)
-                          )
-                        )
+                        React.createElement(Icon, { name: 'Trash2', size: 18 })
                       )
                     )
                   )
@@ -1048,98 +1403,125 @@
               )
             )
           )
-        );
-      };
+        ),
 
-      const renderSuccessModal = () => {
-        if (!showSuccessModal || !scannedStallInfo) return null;
-
-        return React.createElement('div', {
-          className: 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4'
-        },
+        // Admin Game Modal
+        isAdmin && selectedGame && React.createElement('div', { className: "modal-backdrop", onClick: () => setSelectedGame(null) },
           React.createElement('div', {
-            className: 'bg-white rounded-3xl p-8 max-w-md w-full success-modal relative overflow-hidden'
+            className: "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl shadow-2xl p-6 w-full max-w-lg z-9999 max-h-[80vh] overflow-y-auto",
+            onClick: (e) => e.stopPropagation()
           },
-            // Confetti
-            ...Array(20).fill().map((_, i) => 
-              React.createElement('div', {
-                key: i,
-                className: 'confetti',
-                style: {
-                  left: `${Math.random() * 100}%`,
-                  top: '50%',
-                  backgroundColor: ['#f59e0b', '#d97706', '#ea580c', '#dc2626'][Math.floor(Math.random() * 4)],
-                  animationDelay: `${Math.random() * 0.5}s`
-                }
-              })
+            React.createElement('div', { className: "flex justify-between items-center mb-6" },
+              React.createElement('h3', { className: "text-xl font-bold text-gray-800" }, selectedGame.name),
+              React.createElement('button', {
+                onClick: () => setSelectedGame(null),
+                className: "text-gray-400 hover:text-gray-600"
+              },
+                React.createElement(Icon, { name: 'X', size: 24 })
+              )
             ),
-            
-            React.createElement('div', { className: 'text-center relative z-10' },
-              React.createElement('div', { className: 'text-6xl mb-4' }, '🎉'),
-              React.createElement('h3', { className: 'text-2xl font-bold text-gray-800 mb-2' }, 'Success!'),
-              React.createElement('div', { 
-                className: `inline-block px-6 py-2 rounded-full bg-gradient-to-r ${scannedStallInfo.color} text-white font-bold mb-4` 
-              }, scannedStallInfo.name),
-              React.createElement('p', { className: 'text-gray-600 mb-4' }, 
-                `You've visited ${visitedStalls.length} of 5 stalls`
-              ),
-              React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-3 mb-4' },
+
+            React.createElement('h4', { className: "font-bold text-gray-700 mb-4" }, 'Pending Players'),
+
+            React.createElement('div', { className: "space-y-4" },
+              participants.filter(p => {
+                if (!p || p.isAdmin) return false;
+                if (!p.games || !p.games[selectedGame.id]) return false;
+                if (!p.games[selectedGame.id].scanned) return false;
+                if (selectedGame.gamePoints <= 0) return false;
+                if (p.games[selectedGame.id].coinsEarned > 0) return false;
+                return true;
+              }).length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
+                React.createElement('p', null, 'No pending players')
+              ) : participants.filter(p => {
+                if (!p || p.isAdmin) return false;
+                if (!p.games || !p.games[selectedGame.id]) return false;
+                if (!p.games[selectedGame.id].scanned) return false;
+                if (selectedGame.gamePoints <= 0) return false;
+                if (p.games[selectedGame.id].coinsEarned > 0) return false;
+                return true;
+              }).map(player => 
                 React.createElement('div', {
-                  className: 'bg-gradient-to-r from-amber-500 to-orange-600 h-3 rounded-full transition-all duration-500',
-                  style: { width: `${(visitedStalls.length / 5) * 100}%` }
-                })
-              ),
-              React.createElement('p', { className: 'text-sm text-gray-500' }, 
-                'Returning to home...'
+                  key: `${player.name}-${player.category}`,
+                  className: "bg-gray-50 border border-gray-200 rounded-xl p-4"
+                },
+                  React.createElement('div', { className: "font-bold text-gray-800 mb-3" },
+                    `${player.name} (${player.category})`
+                  ),
+                  React.createElement('div', { className: "flex gap-2" },
+                    React.createElement('input', {
+                      type: "number",
+                      id: `points-${player.name}-${player.category}`,
+                      placeholder: `Coins (0-${selectedGame.maxCoins})`,
+                      min: "0",
+                      max: selectedGame.maxCoins.toString(),
+                      className: "flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500"
+                    }),
+                    React.createElement('button', {
+                      onClick: () => {
+                        const input = document.getElementById(`points-${player.name}-${player.category}`);
+                        const coins = parseInt(input.value) || 0;
+                        
+                        if (confirm(`Award ${coins} coins to ${player.name}?`)) {
+                          if (awardGamePoints(player.name, player.category, selectedGame.id, coins)) {
+                            const gamePercent = selectedGame.maxCoins > 0 ? Math.round((coins / selectedGame.maxCoins) * selectedGame.gamePoints) : 0;
+                            alert(`${coins} coins awarded = ${gamePercent}%!`);
+                            input.value = '';
+                          }
+                        }
+                      },
+                      className: "px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold hover:scale-105 transition-all"
+                    }, 'Award')
+                  )
+                )
               )
             )
           )
-        );
-      };
-
-      // Navigation
-      const NavButton = ({ icon, label, targetView }) => {
-        const isActive = view === targetView;
-        return React.createElement('button', {
-          onClick: () => setView(targetView),
-          className: `flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${
-            isActive 
-              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg' 
-              : 'text-gray-600 hover:bg-gray-100'
-          }`
-        },
-          React.createElement(Icon, { name: icon, className: 'w-6 h-6' }),
-          React.createElement('span', { className: 'text-xs font-bold' }, label)
-        );
-      };
-
-      return React.createElement('div', { className: 'min-h-screen pb-24' },
-        React.createElement('div', { className: 'max-w-md mx-auto p-4' },
-          view === 'home' && renderHome(),
-          view === 'scanner' && renderScanner(),
-          view === 'leaderboard' && renderLeaderboard(),
-          view === 'admin' && renderAdmin()
         ),
 
         // Bottom Navigation
-        React.createElement('div', { 
-          className: 'fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl' 
-        },
-          React.createElement('div', { className: 'max-w-md mx-auto flex justify-around py-3' },
-            React.createElement(NavButton, { icon: 'home', label: 'Journey', targetView: 'home' }),
-            React.createElement(NavButton, { icon: 'scan', label: 'Scan', targetView: 'scanner' }),
-            React.createElement(NavButton, { icon: 'trophy', label: 'Leaderboard', targetView: 'leaderboard' }),
-            React.createElement(NavButton, { icon: 'shield', label: 'Admin', targetView: 'admin' })
+        React.createElement('div', { className: "bottom-nav" },
+          React.createElement('div', { className: "flex max-w-7xl mx-auto" },
+            !isAdmin && React.createElement('button', {
+              onClick: startQRScanner,
+              className: "nav-button"
+            },
+              React.createElement(Icon, { name: 'ScanLine', size: 24 }),
+              React.createElement('div', { className: "nav-label" }, 'Scan')
+            ),
+            React.createElement('button', {
+              onClick: () => setShowLeaderboard(true),
+              className: "nav-button"
+            },
+              React.createElement(Icon, { name: 'Trophy', size: 24 }),
+              React.createElement('div', { className: "nav-label" }, 'Board')
+            ),
+            isAdmin && React.createElement('button', {
+              onClick: () => setActiveView(activeView === 'scores' ? 'home' : 'scores'),
+              className: `nav-button ${activeView === 'scores' ? 'active' : ''}`
+            },
+              React.createElement(Icon, { name: 'BarChart3', size: 24 }),
+              React.createElement('div', { className: "nav-label" }, 'Scores')
+            ),
+            React.createElement('button', {
+              onClick: () => {
+                if (confirm('Logout?')) {
+                  localStorage.removeItem('sevaMelaCurrentUser');
+                  window.location.reload();
+                }
+              },
+              className: "nav-button"
+            },
+              React.createElement(Icon, { name: 'LogOut', size: 24 }),
+              React.createElement('div', { className: "nav-label" }, 'Logout')
+            )
           )
-        ),
-
-        renderSuccessModal()
+        )
       );
     }
 
-    // Render the app
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(React.createElement(SpiritualGamesApp));
+    root.render(React.createElement(SevaMelaApp));
   </script>
 </body>
 </html>
