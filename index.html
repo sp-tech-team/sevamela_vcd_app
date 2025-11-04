@@ -107,126 +107,142 @@
 
     .monkey-walker {
       position: absolute;
-      bottom: 45px;
+      bottom: 55px;
       left: 0;
-      font-size: 60px;
+      font-size: 32px;
       animation: walkPath 4s ease-in-out infinite;
-      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
 
     @keyframes walkPath {
-      0%, 100% {
+      0% {
         left: 0;
-        transform: translateX(0) scaleX(1);
+        transform: scaleX(1);
       }
-      48% {
-        transform: translateX(0) scaleX(1);
+      45% {
+        left: calc(100% - 40px);
+        transform: scaleX(1);
       }
-      50% {
-        transform: translateX(0) scaleX(-1);
+      55% {
+        left: calc(100% - 40px);
+        transform: scaleX(-1);
       }
-      98%, 100% {
-        left: calc(100% - 60px);
-        transform: translateX(0) scaleX(-1);
+      100% {
+        left: 0;
+        transform: scaleX(-1);
       }
     }
 
-    .spiritual-symbols {
+    .destination-symbol {
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 80px;
-      animation: glowPulse 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+      font-size: 48px;
+      filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
+      animation: glowPulse 2s ease-in-out infinite, breathe 4s ease-in-out infinite;
     }
 
     @keyframes glowPulse {
       0%, 100% {
-        transform: translateX(-50%) scale(1);
-        opacity: 0.8;
+        filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
       }
       50% {
-        transform: translateX(-50%) scale(1.1);
-        opacity: 1;
+        filter: drop-shadow(0 0 40px rgba(251, 191, 36, 1));
       }
     }
 
-    .floating-elements {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
+    @keyframes breathe {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+      }
+      50% {
+        transform: translateX(-50%) scale(1.1);
+      }
     }
 
     .floating-particle {
       position: absolute;
       font-size: 24px;
       opacity: 0;
-      animation: float 6s ease-in-out infinite;
+      animation: floatUp 4s ease-in infinite;
     }
 
     .floating-particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .floating-particle:nth-child(2) { left: 20%; animation-delay: 1s; }
-    .floating-particle:nth-child(3) { left: 30%; animation-delay: 2s; }
-    .floating-particle:nth-child(4) { left: 40%; animation-delay: 0.5s; }
-    .floating-particle:nth-child(5) { left: 50%; animation-delay: 1.5s; }
+    .floating-particle:nth-child(2) { left: 20%; animation-delay: 0.5s; }
+    .floating-particle:nth-child(3) { left: 30%; animation-delay: 1s; }
+    .floating-particle:nth-child(4) { left: 40%; animation-delay: 1.5s; }
+    .floating-particle:nth-child(5) { left: 50%; animation-delay: 2s; }
     .floating-particle:nth-child(6) { left: 60%; animation-delay: 2.5s; }
-    .floating-particle:nth-child(7) { left: 70%; animation-delay: 1s; }
-    .floating-particle:nth-child(8) { left: 80%; animation-delay: 2s; }
-    .floating-particle:nth-child(9) { left: 90%; animation-delay: 0.8s; }
+    .floating-particle:nth-child(7) { left: 70%; animation-delay: 3s; }
+    .floating-particle:nth-child(8) { left: 80%; animation-delay: 3.5s; }
+    .floating-particle:nth-child(9) { left: 90%; animation-delay: 4s; }
 
-    @keyframes float {
+    @keyframes floatUp {
       0% {
-        bottom: -50px;
+        bottom: 0;
         opacity: 0;
-        transform: translateX(0) rotate(0deg);
+        transform: translateY(0) rotate(0deg);
       }
       10% {
-        opacity: 0.7;
+        opacity: 0.6;
       }
       90% {
-        opacity: 0.7;
+        opacity: 0.6;
       }
       100% {
         bottom: 100%;
         opacity: 0;
-        transform: translateX(50px) rotate(360deg);
+        transform: translateY(-50px) rotate(360deg);
+      }
+    }
+
+    .breathing-circle {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 60px;
+      border: 3px solid rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: circleBreath 4s ease-in-out infinite;
+    }
+
+    @keyframes circleBreath {
+      0%, 100% {
+        transform: translateX(-50%) scale(0.8);
+        opacity: 0.5;
+      }
+      50% {
+        transform: translateX(-50%) scale(1.2);
+        opacity: 1;
       }
     }
 
     .splash-title {
-      color: white;
-      font-size: 48px;
+      font-size: 2.5rem;
       font-weight: bold;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      margin-bottom: 10px;
-      animation: titleGlow 2s ease-in-out infinite;
+      color: white;
+      text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      margin-bottom: 0.5rem;
+      animation: textGlow 2s ease-in-out infinite;
     }
 
-    @keyframes titleGlow {
+    @keyframes textGlow {
       0%, 100% {
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 215, 0, 0.5);
+        text-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5);
       }
       50% {
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.8);
+        text-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.8);
       }
-    }
-
-    .splash-subtitle {
-      color: rgba(255, 255, 255, 0.95);
-      font-size: 20px;
-      font-weight: 500;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      margin-top: 10px;
     }
 
     .splash-tagline {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 16px;
+      color: rgba(255,255,255,0.9);
+      font-size: 1.1rem;
+      margin-top: 1rem;
       font-style: italic;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-      margin-top: 30px;
       animation: fadeIn 2s ease-in;
     }
 
@@ -234,26 +250,6 @@
       from { opacity: 0; }
       to { opacity: 1; }
     }
-
-    .loading-dots {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 40px;
-    }
-
-    .dot {
-      width: 12px;
-      height: 12px;
-      background: white;
-      border-radius: 50%;
-      animation: bounce 1.4s ease-in-out infinite;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
-    }
-
-    .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
 
     .splash-hidden {
       animation: fadeOut 0.8s ease-out forwards;
@@ -266,139 +262,144 @@
       }
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: .5;
-      }
+    .loading-dots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 30px;
     }
 
-    .animate-pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    .loading-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      animation: bounce 1.4s ease-in-out infinite;
     }
+
+    .loading-dot:nth-child(1) { animation-delay: 0s; }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
 
     @keyframes bounce {
-      0%, 100% {
-        transform: translateY(-25%);
-        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+      0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
       }
-      50% {
+      40% {
+        transform: scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 640px) {
+      .spiritual-path {
+        width: 300px;
+        height: 150px;
+      }
+      .splash-title {
+        font-size: 1.8rem;
+      }
+      .splash-tagline {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Rest of styles */
+    .scan-button {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 9999px;
+      font-size: 1.125rem;
+      font-weight: 600;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .scan-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .scan-button:active {
+      transform: translateY(0);
+    }
+
+    .success-modal {
+      animation: modalSlideIn 0.5s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      to {
+        opacity: 1;
         transform: translateY(0);
-        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
       }
     }
 
-    .animate-bounce {
-      animation: bounce 1s infinite;
+    @keyframes confetti {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-300px) rotate(720deg);
+      }
     }
-
-    .loader {
-      border: 4px solid #f3f4f6;
-      border-top: 4px solid #d97706;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    video {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    #qr-reader {
-      width: 100%;
-    }
-
-    #qr-reader__dashboard_section_csr {
-      display: none !important;
-    }
-
-    #qr-reader video {
-      border-radius: 12px;
-    }
-
-    /* Meditative breathing effect */
-    .breath-circle {
+    
+    .confetti {
       position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 100px;
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      border-radius: 50%;
-      animation: breathe 4s ease-in-out infinite;
-    }
-
-    @keyframes breathe {
-      0%, 100% {
-        transform: translateX(-50%) scale(0.8);
-        opacity: 0.4;
-      }
-      50% {
-        transform: translateX(-50%) scale(1.2);
-        opacity: 0.8;
-      }
+      width: 10px;
+      height: 10px;
+      background: #f59e0b;
+      animation: confetti 2s ease-out forwards;
     }
   </style>
 </head>
-<body>
-  <!-- Spiritual Splash Screen -->
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
+  <!-- Splash Screen -->
   <div id="splash-screen" class="splash-screen">
-    <!-- Floating particles background -->
-    <div class="floating-elements">
-      <div class="floating-particle">🌸</div>
-      <div class="floating-particle">✨</div>
-      <div class="floating-particle">🪷</div>
-      <div class="floating-particle">🕉️</div>
-      <div class="floating-particle">🌺</div>
-      <div class="floating-particle">⭐</div>
-      <div class="floating-particle">🌼</div>
-      <div class="floating-particle">💫</div>
-      <div class="floating-particle">🌸</div>
-    </div>
-
     <div class="splash-content">
-      <h1 class="splash-title">🕉️ Divine Games Festival 🕉️</h1>
-      <p class="splash-subtitle">Journey through the Five Realms</p>
+      <div class="splash-title">🕉️ Divine Games Festival 🕉️</div>
+      <div class="text-white text-lg mb-2">Journey through the Five Realms</div>
       
-      <!-- Spiritual path with walking monkey -->
       <div class="spiritual-path">
-        <div class="spiritual-symbols">🙏</div>
+        <div class="destination-symbol">🙏</div>
         <div class="path-line"></div>
         <div class="monkey-walker">🐒</div>
-        <div class="breath-circle"></div>
+        <div class="breathing-circle"></div>
+        
+        <div class="floating-particle">🌸</div>
+        <div class="floating-particle">✨</div>
+        <div class="floating-particle">🪷</div>
+        <div class="floating-particle">🕉️</div>
+        <div class="floating-particle">🌺</div>
+        <div class="floating-particle">⭐</div>
+        <div class="floating-particle">💫</div>
+        <div class="floating-particle">🌸</div>
+        <div class="floating-particle">✨</div>
       </div>
       
-      <p class="splash-tagline">"Walking the path of enlightenment, seeking divine wisdom"</p>
+      <div class="splash-tagline">"Walking the path of enlightenment, seeking divine wisdom"</div>
       
-      <!-- Loading dots -->
       <div class="loading-dots">
-        <div class="dot"></div>
-        <div class="dot"></div>
-        <div class="dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
       </div>
     </div>
   </div>
 
-  <div id="root">
-    <!-- Loading State (hidden initially) -->
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(to bottom right, #fef3c7, #fed7aa, #fef08a);">
-      <div style="text-align: center;">
-        <div class="loader" style="margin: 0 auto 20px;"></div>
-        <p style="color: #92400e; font-weight: 600;">Loading Divine Games Festival...</p>
-      </div>
-    </div>
-  </div>
+  <!-- Main App -->
+  <div id="root"></div>
 
   <!-- React and ReactDOM from CDN -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -553,9 +554,12 @@
         }
       };
 
-      // Scanner functions
+      // Scanner functions - FIXED VERSION
       const startScanner = async () => {
-        if (scannerInstanceRef.current) return;
+        if (scannerInstanceRef.current) {
+          console.log('Scanner already running');
+          return;
+        }
 
         // First set showScanner to true so the div renders
         setShowScanner(true);
@@ -567,6 +571,7 @@
         const element = document.getElementById("qr-reader");
         if (!element) {
           setCameraError('Scanner initialization failed. Please try again.');
+          setShowScanner(false);
           return;
         }
 
@@ -585,6 +590,8 @@
         } catch (err) {
           console.error('Camera error:', err);
           setShowScanner(false);
+          scannerInstanceRef.current = null;
+          
           if (err.name === 'NotAllowedError' || err.message?.includes('Permission')) {
             setCameraError('Camera permission denied. Please allow camera access and try again.');
           } else if (err.name === 'NotFoundError') {
@@ -598,11 +605,30 @@
       const stopScanner = async () => {
         if (scannerInstanceRef.current) {
           try {
+            // Stop the scanner first
             await scannerInstanceRef.current.stop();
-            scannerInstanceRef.current.clear();
+            
+            // Clear the scanner (this may throw errors, so we wrap it)
+            try {
+              // Get the element
+              const element = document.getElementById("qr-reader");
+              if (element) {
+                // Clear the innerHTML directly instead of using .clear()
+                element.innerHTML = '';
+              }
+            } catch (clearErr) {
+              console.warn('Error clearing scanner UI:', clearErr);
+            }
+            
             scannerInstanceRef.current = null;
           } catch (err) {
             console.error('Error stopping scanner:', err);
+            // Force cleanup even if stop fails
+            scannerInstanceRef.current = null;
+            const element = document.getElementById("qr-reader");
+            if (element) {
+              element.innerHTML = '';
+            }
           }
         }
         setShowScanner(false);
@@ -650,397 +676,288 @@
         const playerIndex = allPlayers.findIndex(p => p.username === playerUsername);
         
         if (playerIndex >= 0) {
-          if (!allPlayers[playerIndex].gamePointsDetail) {
-            allPlayers[playerIndex].gamePointsDetail = {};
-          }
-          allPlayers[playerIndex].gamePointsDetail[stallId] = points;
+          const player = allPlayers[playerIndex];
+          player.gamePointsDetail = player.gamePointsDetail || {};
+          player.gamePointsDetail[stallId] = points;
+          player.gamePoints = Object.values(player.gamePointsDetail).reduce((sum, p) => sum + p, 0);
+          player.combinedScore = calculateCombinedScore(player.visitScore, player.gamePoints);
           
-          const totalGamePoints = Object.values(allPlayers[playerIndex].gamePointsDetail).reduce((sum, p) => sum + p, 0);
-          const visitScore = allPlayers[playerIndex].visitScore || 0;
-          allPlayers[playerIndex].gamePoints = totalGamePoints;
-          allPlayers[playerIndex].combinedScore = calculateCombinedScore(visitScore, totalGamePoints);
-          
+          allPlayers[playerIndex] = player;
           localStorage.setItem('allPlayers', JSON.stringify(allPlayers));
-          setPlayers(allPlayers);
           
-          if (playerUsername === username) {
-            const updatedGamePoints = allPlayers[playerIndex].gamePointsDetail;
-            setGamePoints(updatedGamePoints);
-            localStorage.setItem('gamePoints', JSON.stringify(updatedGamePoints));
+          if (player.username === username) {
+            setGamePoints(player.gamePointsDetail);
+            localStorage.setItem('gamePoints', JSON.stringify(player.gamePointsDetail));
           }
           
-          return true;
+          setPlayers([...allPlayers]);
+          alert(`Added ${points} points to ${playerUsername} for ${STALLS.find(s => s.id === stallId)?.name}`);
         }
-        return false;
       };
 
-      const getLeaderboard = () => {
-        return [...players].sort((a, b) => b.combinedScore - a.combinedScore);
-      };
-
-      // Effects
+      // Load players on mount
       useEffect(() => {
-        const loadPlayers = () => {
-          const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
-          setPlayers(allPlayers);
-        };
+        const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
+        setPlayers(allPlayers);
         
-        loadPlayers();
-        const interval = setInterval(loadPlayers, 5000);
-        return () => clearInterval(interval);
+        if (username && visitedStalls.length > 0) {
+          updatePlayersList();
+        }
       }, []);
 
+      // Auto-refresh leaderboard
       useEffect(() => {
-        if (username) updatePlayersList();
-      }, [visitedStalls, gamePoints]);
-
-      useEffect(() => {
-        if (view !== 'scanner') stopScanner();
+        if (view === 'leaderboard') {
+          const interval = setInterval(() => {
+            const allPlayers = JSON.parse(localStorage.getItem('allPlayers') || '[]');
+            setPlayers(allPlayers);
+          }, 5000);
+          return () => clearInterval(interval);
+        }
       }, [view]);
 
+      // Cleanup scanner on unmount or view change
       useEffect(() => {
-        lucide.createIcons();
-      });
+        if (view !== 'scanner') {
+          stopScanner();
+        }
+        
+        return () => {
+          stopScanner();
+        };
+      }, [view]);
 
-      return React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50" },
-        // Header
-        React.createElement('div', { className: "bg-gradient-to-r from-amber-600 to-orange-600 text-white p-6 shadow-lg" },
-          React.createElement('div', { className: "max-w-4xl mx-auto flex items-center justify-between" },
-            React.createElement('div', { className: "flex items-center gap-3" },
-              React.createElement(Icon, { name: "sparkles", className: "w-8 h-8" }),
+      // Render functions
+      const renderHome = () => {
+        const currentReward = getCurrentReward();
+        const currentScore = getCurrentScore();
+
+        return React.createElement('div', { className: 'space-y-6' },
+          // Welcome card
+          React.createElement('div', { 
+            className: 'bg-gradient-to-br from-amber-500 to-orange-600 text-white p-8 rounded-3xl shadow-2xl' 
+          },
+            React.createElement('div', { className: 'flex items-center gap-4 mb-4' },
+              React.createElement('div', { className: 'text-6xl' }, '🕉️'),
               React.createElement('div', null,
-                React.createElement('h1', { className: "text-2xl font-bold" }, 'Divine Games Festival'),
-                React.createElement('p', { className: "text-amber-100 text-sm" }, 'Journey through the Five Realms')
+                React.createElement('h1', { className: 'text-3xl font-bold' }, 'Divine Games'),
+                React.createElement('p', { className: 'text-amber-100' }, 'Journey through the Five Realms')
               )
             ),
-            username && React.createElement('div', { className: "text-right" },
-              React.createElement('div', { className: "text-amber-100 text-sm" }, 'Playing as'),
-              React.createElement('div', { className: "font-bold text-lg" }, username)
+            username && React.createElement('div', { className: 'bg-white/20 backdrop-blur-sm rounded-xl p-4 mt-6' },
+              React.createElement('p', { className: 'text-sm text-amber-100' }, 'Your Spirit Name'),
+              React.createElement('p', { className: 'text-2xl font-bold' }, username)
             )
-          )
-        ),
+          ),
 
-        // Navigation
-        React.createElement('div', { className: "bg-white border-b border-amber-200 sticky top-0 z-10 shadow-sm" },
-          React.createElement('div', { className: "max-w-4xl mx-auto flex" },
-            ['home', 'scanner', 'leaderboard', 'admin'].map(tab =>
-              React.createElement('button', {
-                key: tab,
-                onClick: () => tab === 'scanner' ? openScanner() : setView(tab),
-                className: `flex-1 py-4 flex items-center justify-center gap-2 transition-all ${
-                  view === tab ? 'bg-amber-100 text-amber-700 border-b-2 border-amber-600' : 'text-gray-600 hover:bg-amber-50'
-                }`
-              },
-                React.createElement(Icon, { 
-                  name: tab === 'home' ? 'star' : tab === 'scanner' ? 'camera' : tab === 'leaderboard' ? 'trophy' : 'users',
-                  className: "w-5 h-5"
-                }),
-                React.createElement('span', { className: "font-medium" }, 
-                  tab.charAt(0).toUpperCase() + tab.slice(1)
+          // Progress card
+          username && React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
+            React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-4' }, 'Your Progress'),
+            React.createElement('div', { className: 'space-y-4' },
+              React.createElement('div', null,
+                React.createElement('div', { className: 'flex justify-between text-sm text-gray-600 mb-2' },
+                  React.createElement('span', null, 'Combined Score'),
+                  React.createElement('span', { className: 'font-bold text-amber-600' }, `${currentScore}%`)
+                ),
+                React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-3' },
+                  React.createElement('div', {
+                    className: 'bg-gradient-to-r from-amber-500 to-orange-600 h-3 rounded-full transition-all duration-500',
+                    style: { width: `${currentScore}%` }
+                  })
                 )
-              )
-            )
-          )
-        ),
-
-        // Success Modal
-        showSuccessModal && scannedStallInfo && React.createElement('div', {
-          className: "fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-        },
-          React.createElement('div', { className: "bg-white rounded-2xl p-8 max-w-md w-full text-center animate-bounce" },
-            React.createElement('div', { className: "text-6xl mb-4" }, '🎉'),
-            React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-2" }, 'Realm Discovered!'),
-            React.createElement('div', { className: `text-xl font-bold bg-gradient-to-r ${scannedStallInfo.color} bg-clip-text text-transparent mb-4` },
-              scannedStallInfo.name
-            ),
-            React.createElement('div', { className: "text-3xl font-bold text-amber-600 mb-2" }, '+20%'),
-            React.createElement('p', { className: "text-gray-600" }, 'Added to your spiritual journey')
-          )
-        ),
-
-        // Main Content
-        React.createElement('div', { className: "max-w-4xl mx-auto p-6 pb-20" },
-          view === 'home' && renderHomeView(),
-          view === 'scanner' && renderScannerView(),
-          view === 'leaderboard' && renderLeaderboardView(),
-          view === 'admin' && renderAdminView()
-        ),
-
-        // Footer
-        React.createElement('div', { className: "mt-12 pb-6 text-center text-gray-500 text-sm" },
-          React.createElement('p', null, 'May your journey be blessed with wisdom and joy'),
-          React.createElement('p', { className: "text-xs mt-2" }, '🕉️ Divine Games Festival 2025 🕉️')
-        )
-      );
-
-      function renderHomeView() {
-        return React.createElement('div', { className: "space-y-6" },
-          // Welcome or Score Card
-          !username ? React.createElement('div', { className: "bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-2xl p-6 shadow-lg" },
-            React.createElement('h2', { className: "text-2xl font-bold mb-2" }, '🙏 Welcome, Seeker!'),
-            React.createElement('p', { className: "mb-4" }, 'Begin your spiritual journey by scanning your first stall QR code.'),
-            React.createElement('button', {
-              onClick: openScanner,
-              className: "bg-white text-amber-600 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-all"
-            }, 'Start Your Journey')
-          ) : React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('div', { className: "text-center mb-6" },
-              React.createElement('div', { className: "text-6xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent" },
-                getCurrentScore() + '%'
               ),
-              React.createElement('div', { className: "text-gray-600 mt-2" }, 'Your Spiritual Score')
-            ),
-            getCurrentReward() && React.createElement('div', { className: "bg-gradient-to-r from-amber-100 to-orange-100 rounded-xl p-4 text-center" },
-              React.createElement('div', { className: "text-4xl mb-2" }, getCurrentReward().icon),
-              React.createElement('div', { className: "text-xl font-bold text-amber-800" }, getCurrentReward().name),
-              React.createElement('div', { className: "text-amber-700 text-sm mt-1" }, getCurrentReward().message)
-            ),
-            React.createElement('div', { className: "mt-6 grid grid-cols-2 gap-4 text-center" },
-              React.createElement('div', { className: "bg-amber-50 rounded-lg p-4" },
-                React.createElement('div', { className: "text-2xl font-bold text-amber-700" }, calculateVisitScore(visitedStalls) + '%'),
-                React.createElement('div', { className: "text-xs text-gray-600 mt-1" }, 'Visit Score')
+              React.createElement('div', { className: 'grid grid-cols-2 gap-4' },
+                React.createElement('div', { className: 'bg-amber-50 p-4 rounded-xl' },
+                  React.createElement('p', { className: 'text-xs text-gray-600' }, 'Stalls Visited'),
+                  React.createElement('p', { className: 'text-2xl font-bold text-amber-600' }, `${visitedStalls.length}/5`)
+                ),
+                React.createElement('div', { className: 'bg-orange-50 p-4 rounded-xl' },
+                  React.createElement('p', { className: 'text-xs text-gray-600' }, 'Game Points'),
+                  React.createElement('p', { className: 'text-2xl font-bold text-orange-600' }, calculateGamePoints(gamePoints))
+                )
               ),
-              React.createElement('div', { className: "bg-orange-50 rounded-lg p-4" },
-                React.createElement('div', { className: "text-2xl font-bold text-orange-700" }, calculateGamePoints(gamePoints)),
-                React.createElement('div', { className: "text-xs text-gray-600 mt-1" }, 'Game Points')
+              currentReward && React.createElement('div', { 
+                className: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white p-4 rounded-xl text-center' 
+              },
+                React.createElement('div', { className: 'text-3xl mb-2' }, currentReward.icon),
+                React.createElement('p', { className: 'font-bold text-lg' }, currentReward.name),
+                React.createElement('p', { className: 'text-sm text-amber-100' }, currentReward.message)
               )
             )
           ),
 
-          // Stalls Progress
-          React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('h2', { className: "text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" },
-              React.createElement(Icon, { name: "sparkles", className: "w-6 h-6 text-amber-600" }),
-              'The Five Realms'
-            ),
-            React.createElement('div', { className: "space-y-3" },
+          // Stalls list
+          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
+            React.createElement('h3', { className: 'text-xl font-bold text-gray-800 mb-4' }, 'The Five Realms'),
+            React.createElement('div', { className: 'space-y-3' },
               STALLS.map((stall, index) => {
-                const isVisited = visitedStalls.includes(stall.id);
-                const stallGamePoints = gamePoints[stall.id] || 0;
+                const visited = visitedStalls.includes(stall.id);
+                const points = gamePoints[stall.id] || 0;
+                
                 return React.createElement('div', {
                   key: stall.id,
-                  className: `p-4 rounded-xl border-2 transition-all ${
-                    isVisited ? 'bg-gradient-to-r ' + stall.color + ' text-white border-transparent' : 'bg-gray-50 border-gray-200'
-                  }`
+                  className: `p-4 rounded-xl border-2 ${visited ? 'border-amber-400 bg-amber-50' : 'border-gray-200 bg-gray-50'}`
                 },
-                  React.createElement('div', { className: "flex items-center justify-between" },
-                    React.createElement('div', { className: "flex items-center gap-3" },
-                      React.createElement(Icon, { 
-                        name: isVisited ? "check-circle" : "circle",
-                        className: isVisited ? "w-6 h-6" : "w-6 h-6 text-gray-400"
-                      }),
+                  React.createElement('div', { className: 'flex items-center justify-between' },
+                    React.createElement('div', { className: 'flex items-center gap-3' },
+                      React.createElement('div', { 
+                        className: `w-10 h-10 rounded-full bg-gradient-to-r ${stall.color} flex items-center justify-center text-white font-bold` 
+                      }, index + 1),
                       React.createElement('div', null,
-                        React.createElement('div', { className: "font-bold" }, stall.name),
-                        React.createElement('div', { className: `text-sm ${isVisited ? 'text-white/80' : 'text-gray-500'}` },
-                          'Realm ' + (index + 1)
-                        )
+                        React.createElement('p', { className: 'font-bold text-gray-800' }, stall.name),
+                        visited && React.createElement('p', { className: 'text-sm text-gray-600' }, `Game Points: ${points}`)
                       )
                     ),
-                    React.createElement('div', { className: "text-right" },
-                      isVisited ? React.createElement(React.Fragment, null,
-                        React.createElement('div', { className: "text-2xl font-bold" }, '+20%'),
-                        stallGamePoints > 0 && React.createElement('div', { className: "text-sm opacity-90" }, '+' + stallGamePoints + ' pts')
-                      ) : React.createElement('div', { className: "text-gray-400 text-sm" }, 'Not visited')
-                    )
+                    visited ? 
+                      React.createElement('span', { className: 'text-2xl' }, '✅') :
+                      React.createElement('span', { className: 'text-2xl' }, '⭕')
                   )
                 );
               })
-            ),
-            visitedStalls.length < 5 && React.createElement('button', {
-              onClick: openScanner,
-              className: "w-full mt-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition-all"
-            }, 'Scan Next Stall')
+            )
           ),
 
-          // Rewards Track
-          React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('h2', { className: "text-xl font-bold text-gray-800 mb-4 flex items-center gap-2" },
-              React.createElement(Icon, { name: "award", className: "w-6 h-6 text-amber-600" }),
-              'Rewards Path'
+          // Action button
+          React.createElement('button', {
+            onClick: openScanner,
+            className: 'scan-button w-full'
+          }, 
+            '📱 Start Your Journey'
+          )
+        );
+      };
+
+      const renderScanner = () => {
+        return React.createElement('div', { className: 'space-y-6' },
+          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
+            React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2' },
+              React.createElement(Icon, { name: 'scan' }),
+              'Scan QR Code'
             ),
-            React.createElement('div', { className: "space-y-2" },
-              REWARDS.map(reward => {
-                const visitScore = calculateVisitScore(visitedStalls);
-                const isUnlocked = visitScore >= reward.threshold;
-                return React.createElement('div', {
-                  key: reward.threshold,
-                  className: `p-3 rounded-lg flex items-center justify-between ${
-                    isUnlocked ? 'bg-gradient-to-r from-amber-100 to-orange-100' : 'bg-gray-50'
-                  }`
-                },
-                  React.createElement('div', { className: "flex items-center gap-3" },
-                    React.createElement('div', { className: "text-2xl" }, reward.icon),
-                    React.createElement('div', null,
-                      React.createElement('div', { className: `font-bold ${isUnlocked ? 'text-amber-800' : 'text-gray-600'}` },
-                        reward.name
-                      ),
-                      React.createElement('div', { className: `text-sm ${isUnlocked ? 'text-amber-700' : 'text-gray-500'}` },
-                        reward.message
-                      )
-                    )
-                  ),
-                  React.createElement('div', { className: `font-bold ${isUnlocked ? 'text-amber-700' : 'text-gray-400'}` },
-                    reward.threshold + '%'
-                  )
-                );
-              })
+            
+            !showScanner ? (
+              React.createElement('div', { className: 'text-center py-8' },
+                React.createElement('div', { className: 'text-6xl mb-4' }, '📱'),
+                React.createElement('p', { className: 'text-gray-600 mb-6' }, 'Point your camera at the QR code at any stall'),
+                React.createElement('button', {
+                  onClick: startScanner,
+                  className: 'bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-4 rounded-full font-bold hover:scale-105 transition-transform'
+                }, 'Open Camera')
+              )
+            ) : (
+              React.createElement('div', null,
+                React.createElement('div', { 
+                  id: 'qr-reader',
+                  className: 'rounded-xl overflow-hidden'
+                }),
+                React.createElement('button', {
+                  onClick: stopScanner,
+                  className: 'w-full mt-4 bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition-colors'
+                }, 'Close Camera')
+              )
+            ),
+
+            cameraError && React.createElement('div', { 
+              className: 'mt-4 p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700' 
+            },
+              React.createElement('p', { className: 'font-bold mb-2' }, '⚠️ Camera Error'),
+              React.createElement('p', { className: 'text-sm' }, cameraError),
+              cameraError.includes('HTTPS') && React.createElement('div', { className: 'mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg' },
+                React.createElement('p', { className: 'text-sm text-amber-800 font-bold mb-2' }, '💡 How to fix:'),
+                React.createElement('p', { className: 'text-sm text-amber-700' }, '1. Deploy this app to Netlify, Vercel, or similar'),
+                React.createElement('p', { className: 'text-sm text-amber-700' }, '2. Access via HTTPS URL'),
+                React.createElement('p', { className: 'text-sm text-amber-700' }, '3. Camera will work automatically!')
+              )
             )
           )
         );
-      }
+      };
 
-      function renderScannerView() {
-        return React.createElement('div', { className: "space-y-6" },
-          React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('div', { className: "flex justify-between items-center mb-4" },
-              React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, 'Scan Stall QR Code'),
-              showScanner && React.createElement('button', {
-                onClick: () => { stopScanner(); setView('home'); },
-                className: "text-gray-600 hover:text-gray-800"
-              },
-                React.createElement(Icon, { name: "x", className: "w-6 h-6" })
-              )
+      const renderLeaderboard = () => {
+        const sortedPlayers = [...players].sort((a, b) => b.combinedScore - a.combinedScore);
+
+        return React.createElement('div', { className: 'space-y-6' },
+          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
+            React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2' },
+              React.createElement(Icon, { name: 'trophy' }),
+              'Leaderboard'
             ),
-
-            cameraError ? React.createElement('div', { className: "text-center p-8" },
-              React.createElement(Icon, { name: "alert-circle", className: "w-16 h-16 text-red-500 mx-auto mb-4" }),
-              React.createElement('p', { className: "text-red-600 mb-4" }, cameraError),
-              React.createElement('button', {
-                onClick: startScanner,
-                className: "bg-gradient-to-r from-amber-600 to-orange-600 text-white px-6 py-3 rounded-xl font-bold hover:scale-105 transition-all"
-              }, 'Try Again')
-            ) : !showScanner ? React.createElement('div', { className: "text-center" },
-              React.createElement('div', { className: "w-64 h-64 mx-auto bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center border-4 border-dashed border-amber-400 mb-6" },
-                React.createElement(Icon, { name: "camera", className: "w-24 h-24 text-amber-600" })
-              ),
-              React.createElement('p', { className: "text-gray-600 mb-6" }, 'Position the QR code within the frame to scan'),
-              React.createElement('button', {
-                onClick: startScanner,
-                className: "bg-gradient-to-r from-amber-600 to-orange-600 text-white px-8 py-4 rounded-xl font-bold hover:scale-105 transition-all text-lg inline-flex items-center gap-2"
-              },
-                React.createElement(Icon, { name: "camera", className: "w-6 h-6" }),
-                'Open Camera'
+            
+            sortedPlayers.length === 0 ? (
+              React.createElement('div', { className: 'text-center py-12' },
+                React.createElement('div', { className: 'text-6xl mb-4' }, '🏆'),
+                React.createElement('p', { className: 'text-gray-500' }, 'No players yet. Be the first to start your journey!')
               )
-            ) : React.createElement('div', { className: "relative" },
-              React.createElement('div', { id: "qr-reader", className: "overflow-hidden rounded-xl" }),
-              scanCooldown && React.createElement('div', {
-                className: "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-75 text-white px-4 py-2 rounded-lg text-sm z-10"
-              }, '✨ Processing scan...')
-            ),
-
-            React.createElement('div', { className: "mt-6 p-4 bg-amber-50 rounded-xl" },
-              React.createElement('h3', { className: "font-bold text-amber-800 mb-2" }, '📱 How to Scan:'),
-              React.createElement('ol', { className: "text-sm text-amber-700 space-y-1" },
-                React.createElement('li', null, '1. Allow camera permissions when prompted'),
-                React.createElement('li', null, '2. Point your camera at the stall\'s QR code'),
-                React.createElement('li', null, '3. Hold steady until the scan completes'),
-                React.createElement('li', null, '4. Get your +20% reward instantly!')
-              )
-            ),
-
-            React.createElement('div', { className: "mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl" },
-              React.createElement('h3', { className: "font-bold text-blue-800 mb-2" }, '💡 Testing Locally?'),
-              React.createElement('p', { className: "text-sm text-blue-700 mb-3" },
-                'Camera requires HTTPS. Use demo buttons below for local testing, or deploy to enable camera.'
-              ),
-              React.createElement('p', { className: "text-sm font-bold text-blue-800 mb-2" }, 'Demo Mode: Click to simulate scanning'),
-              React.createElement('div', { className: "space-y-2" },
-                STALLS.map(stall =>
-                  React.createElement('button', {
-                    key: stall.id,
-                    onClick: () => handleQRScan(stall.qrCode),
-                    disabled: visitedStalls.includes(stall.id),
-                    className: `w-full py-2 px-4 rounded-lg font-bold text-sm transition-all ${
-                      visitedStalls.includes(stall.id)
-                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                        : 'bg-gradient-to-r ' + stall.color + ' text-white hover:scale-105'
+            ) : (
+              React.createElement('div', { className: 'space-y-3' },
+                sortedPlayers.map((player, index) => {
+                  const isCurrentUser = player.username === username;
+                  const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
+                  
+                  return React.createElement('div', {
+                    key: player.username,
+                    className: `p-4 rounded-xl border-2 transition-all ${
+                      isCurrentUser 
+                        ? 'border-amber-400 bg-amber-50 shadow-lg scale-105' 
+                        : 'border-gray-200 bg-white'
                     }`
                   },
-                    visitedStalls.includes(stall.id) ? '✓ Already Visited' : `Demo: ${stall.name}`
-                  )
-                )
-              )
-            )
-          )
-        );
-      }
-
-      function renderLeaderboardView() {
-        const leaderboard = getLeaderboard();
-        return React.createElement('div', { className: "space-y-6" },
-          React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center gap-2" },
-              React.createElement(Icon, { name: "trophy", className: "w-8 h-8 text-amber-600" }),
-              'Live Leaderboard'
-            ),
-
-            leaderboard.length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-12" },
-              React.createElement(Icon, { name: "users", className: "w-16 h-16 mx-auto mb-4 text-gray-300" }),
-              React.createElement('p', null, 'No players yet. Start your journey!')
-            ) : React.createElement('div', { className: "space-y-3" },
-              leaderboard.map((player, index) =>
-                React.createElement('div', {
-                  key: player.username,
-                  className: `p-4 rounded-xl border-2 transition-all ${
-                    player.username === username ? 'bg-gradient-to-r from-amber-100 to-orange-100 border-amber-400' :
-                    index === 0 ? 'bg-gradient-to-r from-yellow-100 to-amber-100 border-yellow-400' :
-                    'bg-gray-50 border-gray-200'
-                  }`
-                },
-                  React.createElement('div', { className: "flex items-center justify-between" },
-                    React.createElement('div', { className: "flex items-center gap-4" },
-                      React.createElement('div', { className: `text-2xl font-bold ${
-                        index === 0 ? 'text-yellow-600' :
-                        index === 1 ? 'text-gray-400' :
-                        index === 2 ? 'text-amber-700' :
-                        'text-gray-500'
-                      }` },
-                        index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`
-                      ),
-                      React.createElement('div', null,
-                        React.createElement('div', { className: "font-bold text-gray-800 flex items-center gap-2" },
-                          player.username,
-                          player.username === username && React.createElement('span', {
-                            className: "text-xs bg-amber-600 text-white px-2 py-1 rounded-full"
-                          }, 'You')
-                        ),
-                        React.createElement('div', { className: "text-sm text-gray-600" },
-                          `Visit: ${player.visitScore}% • Games: ${player.gamePoints}pts`
+                    React.createElement('div', { className: 'flex items-center justify-between' },
+                      React.createElement('div', { className: 'flex items-center gap-3' },
+                        React.createElement('div', { 
+                          className: `w-10 h-10 rounded-full ${
+                            index < 3 
+                              ? 'bg-gradient-to-r from-amber-400 to-orange-500' 
+                              : 'bg-gray-300'
+                          } flex items-center justify-center text-white font-bold` 
+                        }, medal || (index + 1)),
+                        React.createElement('div', null,
+                          React.createElement('p', { 
+                            className: `font-bold ${isCurrentUser ? 'text-amber-700' : 'text-gray-800'}` 
+                          }, 
+                            player.username,
+                            isCurrentUser && React.createElement('span', { className: 'ml-2 text-sm' }, '(You)')
+                          ),
+                          React.createElement('p', { className: 'text-sm text-gray-600' }, 
+                            `${player.visitedStalls.length}/5 stalls · ${player.gamePoints} game points`
+                          )
                         )
-                      )
-                    ),
-                    React.createElement('div', { className: "text-right" },
-                      React.createElement('div', { className: "text-3xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent" },
-                        player.combinedScore + '%'
+                      ),
+                      React.createElement('div', { className: 'text-right' },
+                        React.createElement('p', { 
+                          className: `text-2xl font-bold ${
+                            isCurrentUser ? 'text-amber-600' : 'text-gray-700'
+                          }` 
+                        }, `${player.combinedScore}%`)
                       )
                     )
-                  )
-                )
+                  );
+                })
               )
             ),
-
-            React.createElement('div', { className: "mt-6 text-center text-sm text-gray-500" },
-              React.createElement('p', null, '🔄 Leaderboard updates every 5 seconds')
+            
+            React.createElement('div', { className: 'mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-500' },
+              React.createElement('p', null, '🔄 Leaderboard updates every 5 seconds'),
+              React.createElement('p', { className: 'mt-1' }, `Last updated: ${new Date().toLocaleTimeString()}`)
             )
           )
         );
-      }
+      };
 
-      function renderAdminView() {
-        return React.createElement('div', { className: "space-y-6" },
-          !isAdmin ? React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-6 text-center" }, 'Admin Access'),
-            React.createElement('div', { className: "max-w-sm mx-auto" },
-              React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, 'Enter Admin PIN'),
+      const renderAdmin = () => {
+        if (!isAdmin) {
+          return React.createElement('div', { className: 'space-y-6' },
+            React.createElement('div', { className: 'bg-white rounded-2xl p-8 shadow-lg' },
+              React.createElement('div', { className: 'text-center mb-6' },
+                React.createElement('div', { className: 'text-6xl mb-4' }, '🔐'),
+                React.createElement('h2', { className: 'text-2xl font-bold text-gray-800' }, 'Admin Access')
+              ),
               React.createElement('input', {
-                type: "password",
+                type: 'password',
+                placeholder: 'Enter Admin PIN',
                 value: adminPin,
                 onChange: (e) => setAdminPin(e.target.value),
-                placeholder: "Enter PIN",
-                className: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-amber-500",
-                onKeyPress: (e) => {
-                  if (e.key === 'Enter' && adminPin === '1234') setIsAdmin(true);
-                }
+                className: 'w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-amber-500 mb-4'
               }),
               React.createElement('button', {
                 onClick: () => {
@@ -1050,96 +967,174 @@
                     alert('Incorrect PIN');
                   }
                 },
-                className: "w-full mt-4 bg-gradient-to-r from-amber-600 to-orange-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition-all"
-              }, 'Access Admin Panel'),
-              React.createElement('p', { className: "text-xs text-gray-500 text-center mt-4" }, 'Contact your event organizer for the PIN')
+                className: 'w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 rounded-xl font-bold hover:scale-105 transition-transform'
+              }, 'Login')
             )
-          ) : React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-6 border-2 border-amber-200" },
-            React.createElement('div', { className: "flex justify-between items-center mb-6" },
-              React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, 'Admin Panel'),
+          );
+        }
+
+        const stallPlayers = selectedStall 
+          ? players.filter(p => p.visitedStalls.includes(selectedStall))
+          : [];
+
+        return React.createElement('div', { className: 'space-y-6' },
+          React.createElement('div', { className: 'bg-white rounded-2xl p-6 shadow-lg' },
+            React.createElement('div', { className: 'flex justify-between items-center mb-6' },
+              React.createElement('h2', { className: 'text-2xl font-bold text-gray-800 flex items-center gap-2' },
+                React.createElement(Icon, { name: 'shield' }),
+                'Admin Panel'
+              ),
               React.createElement('button', {
-                onClick: () => { setIsAdmin(false); setAdminPin(''); },
-                className: "text-sm text-gray-600 hover:text-gray-800 px-4 py-2 bg-gray-100 rounded-lg"
+                onClick: () => {
+                  setIsAdmin(false);
+                  setAdminPin('');
+                },
+                className: 'text-red-500 font-bold'
               }, 'Logout')
             ),
-
-            React.createElement('div', { className: "mb-6" },
-              React.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, 'Select Your Stall'),
+            
+            React.createElement('div', { className: 'mb-6' },
+              React.createElement('label', { className: 'block text-sm font-bold text-gray-700 mb-2' }, 'Select Stall'),
               React.createElement('select', {
                 value: selectedStall || '',
                 onChange: (e) => setSelectedStall(e.target.value),
-                className: "w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-amber-500"
+                className: 'w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-amber-500'
               },
-                React.createElement('option', { value: "" }, 'Choose a stall...'),
-                STALLS.map(stall =>
+                React.createElement('option', { value: '' }, 'Choose a stall...'),
+                STALLS.map(stall => 
                   React.createElement('option', { key: stall.id, value: stall.id }, stall.name)
                 )
               )
             ),
 
-            selectedStall && React.createElement('div', { className: "space-y-4" },
-              React.createElement('h3', { className: "font-bold text-gray-800 flex items-center gap-2" },
-                React.createElement(Icon, { name: "users", className: "w-5 h-5 text-amber-600" }),
-                `Players at ${STALLS.find(s => s.id === selectedStall)?.name}`
-              ),
-              
-              players.filter(p => p.visitedStalls?.includes(selectedStall)).length === 0 ?
-                React.createElement('div', { className: "text-center text-gray-500 py-8" },
-                  React.createElement('p', null, 'No players have visited this stall yet.')
-                ) :
-                players.filter(p => p.visitedStalls?.includes(selectedStall)).map(player =>
-                  React.createElement('div', {
-                    key: player.username,
-                    className: "p-4 bg-gray-50 rounded-xl border-2 border-gray-200"
-                  },
-                    React.createElement('div', { className: "flex justify-between items-center mb-3" },
-                      React.createElement('div', null,
-                        React.createElement('div', { className: "font-bold text-gray-800" }, player.username),
-                        React.createElement('div', { className: "text-sm text-gray-600" },
-                          `Current points: ${player.gamePointsDetail?.[selectedStall] || 0} / 100`
+            selectedStall && (
+              React.createElement('div', null,
+                React.createElement('h3', { className: 'font-bold text-lg text-gray-800 mb-4' }, 
+                  `Players at ${STALLS.find(s => s.id === selectedStall)?.name}`
+                ),
+                
+                stallPlayers.length === 0 ? (
+                  React.createElement('p', { className: 'text-center text-gray-500 py-8' }, 'No players have visited this stall yet')
+                ) : (
+                  React.createElement('div', { className: 'space-y-3' },
+                    stallPlayers.map(player => 
+                      React.createElement('div', {
+                        key: player.username,
+                        className: 'p-4 bg-gray-50 rounded-xl border border-gray-200'
+                      },
+                        React.createElement('div', { className: 'flex justify-between items-center mb-3' },
+                          React.createElement('p', { className: 'font-bold text-gray-800' }, player.username),
+                          React.createElement('p', { className: 'text-sm text-gray-600' }, 
+                            `Current: ${player.gamePointsDetail?.[selectedStall] || 0} pts`
+                          )
+                        ),
+                        React.createElement('div', { className: 'flex gap-2' },
+                          [0, 20, 40, 60, 80, 100].map(points => 
+                            React.createElement('button', {
+                              key: points,
+                              onClick: () => addGamePoints(player.username, selectedStall, points),
+                              className: `flex-1 py-2 rounded-lg font-bold transition-all ${
+                                (player.gamePointsDetail?.[selectedStall] || 0) === points
+                                  ? 'bg-amber-500 text-white'
+                                  : 'bg-white border-2 border-gray-300 text-gray-700 hover:border-amber-500'
+                              }`
+                            }, points)
+                          )
                         )
                       )
-                    ),
-                    React.createElement('div', { className: "flex gap-2" },
-                      React.createElement('input', {
-                        type: "number",
-                        id: `points-${player.username}`,
-                        placeholder: "Enter points (0-100)",
-                        min: "0",
-                        max: "100",
-                        defaultValue: player.gamePointsDetail?.[selectedStall] || '',
-                        className: "flex-1 px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
-                      }),
-                      React.createElement('button', {
-                        onClick: () => {
-                          const input = document.getElementById(`points-${player.username}`);
-                          const points = parseInt(input.value) || 0;
-                          if (points >= 0 && points <= 100) {
-                            addGamePoints(player.username, selectedStall, points);
-                            alert(`✅ ${points} points awarded to ${player.username}`);
-                          } else {
-                            alert('Please enter points between 0 and 100');
-                          }
-                        },
-                        className: "px-6 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-lg font-bold hover:scale-105 transition-all"
-                      }, 'Award')
                     )
                   )
-                ),
-
-              React.createElement('div', { className: "mt-6 p-4 bg-amber-50 rounded-xl" },
-                React.createElement('h4', { className: "font-bold text-amber-800 mb-2" }, '📊 Admin Guidelines:'),
-                React.createElement('ul', { className: "text-sm text-amber-700 space-y-1" },
-                  React.createElement('li', null, '• Award 0-100 points based on game performance'),
-                  React.createElement('li', null, '• Points can be updated multiple times'),
-                  React.createElement('li', null, '• Higher scores improve leaderboard ranking'),
-                  React.createElement('li', null, '• Be fair and consistent in scoring')
                 )
               )
             )
           )
         );
-      }
+      };
+
+      const renderSuccessModal = () => {
+        if (!showSuccessModal || !scannedStallInfo) return null;
+
+        return React.createElement('div', {
+          className: 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4'
+        },
+          React.createElement('div', {
+            className: 'bg-white rounded-3xl p-8 max-w-md w-full success-modal relative overflow-hidden'
+          },
+            // Confetti
+            ...Array(20).fill().map((_, i) => 
+              React.createElement('div', {
+                key: i,
+                className: 'confetti',
+                style: {
+                  left: `${Math.random() * 100}%`,
+                  top: '50%',
+                  backgroundColor: ['#f59e0b', '#d97706', '#ea580c', '#dc2626'][Math.floor(Math.random() * 4)],
+                  animationDelay: `${Math.random() * 0.5}s`
+                }
+              })
+            ),
+            
+            React.createElement('div', { className: 'text-center relative z-10' },
+              React.createElement('div', { className: 'text-6xl mb-4' }, '🎉'),
+              React.createElement('h3', { className: 'text-2xl font-bold text-gray-800 mb-2' }, 'Success!'),
+              React.createElement('div', { 
+                className: `inline-block px-6 py-2 rounded-full bg-gradient-to-r ${scannedStallInfo.color} text-white font-bold mb-4` 
+              }, scannedStallInfo.name),
+              React.createElement('p', { className: 'text-gray-600 mb-4' }, 
+                `You've visited ${visitedStalls.length} of 5 stalls`
+              ),
+              React.createElement('div', { className: 'w-full bg-gray-200 rounded-full h-3 mb-4' },
+                React.createElement('div', {
+                  className: 'bg-gradient-to-r from-amber-500 to-orange-600 h-3 rounded-full transition-all duration-500',
+                  style: { width: `${(visitedStalls.length / 5) * 100}%` }
+                })
+              ),
+              React.createElement('p', { className: 'text-sm text-gray-500' }, 
+                'Returning to home...'
+              )
+            )
+          )
+        );
+      };
+
+      // Navigation
+      const NavButton = ({ icon, label, targetView }) => {
+        const isActive = view === targetView;
+        return React.createElement('button', {
+          onClick: () => setView(targetView),
+          className: `flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${
+            isActive 
+              ? 'bg-gradient-to-r from-amber-500 to-orange-600 text-white shadow-lg' 
+              : 'text-gray-600 hover:bg-gray-100'
+          }`
+        },
+          React.createElement(Icon, { name: icon, className: 'w-6 h-6' }),
+          React.createElement('span', { className: 'text-xs font-bold' }, label)
+        );
+      };
+
+      return React.createElement('div', { className: 'min-h-screen pb-24' },
+        React.createElement('div', { className: 'max-w-md mx-auto p-4' },
+          view === 'home' && renderHome(),
+          view === 'scanner' && renderScanner(),
+          view === 'leaderboard' && renderLeaderboard(),
+          view === 'admin' && renderAdmin()
+        ),
+
+        // Bottom Navigation
+        React.createElement('div', { 
+          className: 'fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl' 
+        },
+          React.createElement('div', { className: 'max-w-md mx-auto flex justify-around py-3' },
+            React.createElement(NavButton, { icon: 'home', label: 'Journey', targetView: 'home' }),
+            React.createElement(NavButton, { icon: 'scan', label: 'Scan', targetView: 'scanner' }),
+            React.createElement(NavButton, { icon: 'trophy', label: 'Leaderboard', targetView: 'leaderboard' }),
+            React.createElement(NavButton, { icon: 'shield', label: 'Admin', targetView: 'admin' })
+          )
+        ),
+
+        renderSuccessModal()
+      );
     }
 
     // Render the app
