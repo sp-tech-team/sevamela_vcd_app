@@ -3,30 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Code Generator - Divine Games Festival</title>
+  <title>QR Code Generator - Seva Mela VCD</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
-<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen p-8">
+<body class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 min-h-screen p-8">
   <div class="max-w-4xl mx-auto">
-    <div class="bg-gradient-to-r from-amber-600 to-orange-600 text-white p-8 rounded-2xl shadow-lg mb-8">
+    <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-8 rounded-2xl shadow-lg mb-8">
       <h1 class="text-3xl font-bold mb-2">🕉️ QR Code Generator</h1>
-      <p class="text-amber-100">Generate QR codes for your stall locations</p>
+      <p class="text-green-100">Seva Mela - VCD Department</p>
     </div>
 
     <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Generate Stall QR Codes</h2>
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Generate Game/Activity QR Codes</h2>
       
       <div class="space-y-6">
         <!-- Instructions -->
-        <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-6">
-          <h3 class="font-bold text-amber-800 mb-3">📋 Instructions:</h3>
-          <ol class="space-y-2 text-amber-700">
-            <li>1. Click "Generate QR Code" for each stall below</li>
-            <li>2. Right-click and save each QR code image</li>
-            <li>3. Print the QR codes (recommended size: A4 or 8.5" x 11")</li>
-            <li>4. Place each QR code at its respective stall location</li>
-            <li>5. Ensure QR codes are clearly visible and well-lit</li>
+        <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
+          <h3 class="font-bold text-green-800 mb-3">📋 Instructions:</h3>
+          <ol class="space-y-2 text-green-700">
+            <li>1. Enter your deployed web app URL below</li>
+            <li>2. Click "Generate QR Code" for each game/activity</li>
+            <li>3. Right-click and save each QR code image</li>
+            <li>4. Print the QR codes (recommended size: A4 or 8.5" x 11")</li>
+            <li>5. Place each QR code at its respective game/activity station</li>
+            <li>6. Ensure QR codes are clearly visible and well-lit</li>
           </ol>
         </div>
 
@@ -40,7 +41,7 @@
             id="baseUrl"
             placeholder="https://yourdomain.com"
             value="https://yourdomain.com"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-amber-500"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
           />
           <p class="text-xs text-gray-500 mt-2">
             Enter the URL where your app is hosted (without trailing slash)
@@ -83,7 +84,7 @@
           <span class="text-2xl">📍</span>
           <div>
             <p class="font-bold">Strategic Placement</p>
-            <p class="text-sm text-gray-600">Mount QR codes at eye level near the stall entrance</p>
+            <p class="text-sm text-gray-600">Mount QR codes at eye level near each game/activity station</p>
           </div>
         </div>
       </div>
@@ -91,12 +92,35 @@
   </div>
 
   <script>
-    const STALLS = [
-      { id: 'stall1', name: 'Harmony Haven', qrCode: 'STALL1_HARMONY_HAVEN', color: '#f59e0b' },
-      { id: 'stall2', name: 'Wisdom Well', qrCode: 'STALL2_WISDOM_WELL', color: '#3b82f6' },
-      { id: 'stall3', name: 'Peace Pavilion', qrCode: 'STALL3_PEACE_PAVILION', color: '#10b981' },
-      { id: 'stall4', name: 'Serenity Square', qrCode: 'STALL4_SERENITY_SQUARE', color: '#a855f7' },
-      { id: 'stall5', name: 'Bliss Bay', qrCode: 'STALL5_BLISS_BAY', color: '#14b8a6' }
+    const GAMES = [
+      { 
+        id: 'game1', 
+        name: 'Wheel of Fortune', 
+        qrCode: 'GAME1_WHEEL_OF_FORTUNE', 
+        color: '#f59e0b',
+        icon: '🎡'
+      },
+      { 
+        id: 'game2', 
+        name: 'Memory Card Quiz', 
+        qrCode: 'GAME2_MEMORY_CARD_QUIZ', 
+        color: '#3b82f6',
+        icon: '🎴'
+      },
+      { 
+        id: 'game3', 
+        name: 'Paper Plane', 
+        qrCode: 'GAME3_PAPER_PLANE', 
+        color: '#10b981',
+        icon: '✈️'
+      },
+      { 
+        id: 'game4', 
+        name: 'Volunteer Tree Experience', 
+        qrCode: 'GAME4_VOLUNTEER_TREE', 
+        color: '#8b5cf6',
+        icon: '🌳'
+      }
     ];
 
     function generateQRCodes() {
@@ -104,60 +128,61 @@
       const container = document.getElementById('qrCodeContainer');
       container.innerHTML = '';
 
-      STALLS.forEach((stall, index) => {
-        // Create QR code data - direct URL with stall parameter
-        const qrData = `${baseUrl}?stall=${stall.id}`;
+      GAMES.forEach((game, index) => {
+        // Create QR code data - direct URL with game parameter
+        const qrData = `${baseUrl}?game=${game.id}`;
 
-        // Create stall card
-        const stallCard = document.createElement('div');
-        stallCard.className = 'border-2 border-gray-200 rounded-xl p-6 text-center';
-        stallCard.style.borderColor = stall.color;
+        // Create game card
+        const gameCard = document.createElement('div');
+        gameCard.className = 'border-2 border-gray-200 rounded-xl p-6 text-center';
+        gameCard.style.borderColor = game.color;
 
-        // Stall header
+        // Game header
         const header = document.createElement('div');
         header.className = 'mb-4';
         header.innerHTML = `
-          <h3 class="text-xl font-bold text-gray-800">${stall.name}</h3>
-          <p class="text-sm text-gray-600">Realm ${index + 1}</p>
-          <p class="text-xs text-gray-500 mt-2 break-all">${stall.qrCode}</p>
+          <div class="text-5xl mb-3">${game.icon}</div>
+          <h3 class="text-xl font-bold text-gray-800">${game.name}</h3>
+          <p class="text-sm text-gray-600">Activity ${index + 1}</p>
+          <p class="text-xs text-gray-500 mt-2 break-all">${game.qrCode}</p>
         `;
-        stallCard.appendChild(header);
+        gameCard.appendChild(header);
 
         // QR code container
         const qrContainer = document.createElement('div');
-        qrContainer.id = `qr-${stall.id}`;
+        qrContainer.id = `qr-${game.id}`;
         qrContainer.className = 'flex justify-center mb-4 p-4 bg-white rounded-lg';
-        stallCard.appendChild(qrContainer);
+        gameCard.appendChild(qrContainer);
 
         // Generate QR code
         new QRCode(qrContainer, {
           text: qrData,
           width: 256,
           height: 256,
-          colorDark: stall.color,
+          colorDark: game.color,
           colorLight: '#ffffff',
           correctLevel: QRCode.CorrectLevel.H
         });
 
         // Download button
         const downloadBtn = document.createElement('button');
-        downloadBtn.className = 'w-full bg-gradient-to-r from-amber-600 to-orange-600 text-white py-3 rounded-lg font-bold hover:scale-105 transition-all';
+        downloadBtn.className = 'w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-lg font-bold hover:scale-105 transition-all';
         downloadBtn.innerHTML = '⬇️ Download QR Code';
-        downloadBtn.onclick = () => downloadQRCode(stall.id, stall.name);
-        stallCard.appendChild(downloadBtn);
+        downloadBtn.onclick = () => downloadQRCode(game.id, game.name);
+        gameCard.appendChild(downloadBtn);
 
-        container.appendChild(stallCard);
+        container.appendChild(gameCard);
       });
     }
 
-    function downloadQRCode(stallId, stallName) {
-      const qrContainer = document.getElementById(`qr-${stallId}`);
+    function downloadQRCode(gameId, gameName) {
+      const qrContainer = document.getElementById(`qr-${gameId}`);
       const canvas = qrContainer.querySelector('canvas');
       
       if (canvas) {
         // Create download link
         const link = document.createElement('a');
-        link.download = `${stallName.replace(/\s+/g, '_')}_QR.png`;
+        link.download = `${gameName.replace(/\s+/g, '_')}_QR.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
       }
