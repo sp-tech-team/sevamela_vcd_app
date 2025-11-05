@@ -974,18 +974,11 @@
         );
         
         if (existingUser) {
-          showModal(
-            'Welcome back!',
-            `User "${trimmedName}" (${userCategory}) already exists. Continue with existing account?`,
-            () => {
-              setCurrentUser(existingUser);
-              setUserName(existingUser.name);
-              setIsAdmin(existingUser.isAdmin);
-              setOnboardingComplete(true);
-            },
-            'Continue',
-            true
-          );
+          setCurrentUser(existingUser);
+          setUserName(existingUser.name);
+          setIsAdmin(existingUser.isAdmin);
+          setOnboardingComplete(true);
+          showToast(`Welcome back, ${trimmedName}!`, 'info');
           return;
         }
         
@@ -1561,9 +1554,9 @@
                 ),
                 React.createElement('p', { className: "text-sm text-orange-600 font-medium" }, 'VCD Department')
               ),
-              isAdmin && React.createElement('span', { 
-                className: "text-xs bg-gray-100 px-3 py-1 rounded-full font-bold text-gray-700 border border-gray-300" 
-              }, 'Admin')
+              isAdmin && React.createElement('div', { className: "text-right" },
+              React.createElement('div', { className: "text-xl font-bold text-gray-800 bg-orange-100 px-3 py-1 rounded-lg border-2 border-orange-400" }, 'Admin')
+            )
             ),
             !isAdmin && React.createElement('div', { className: "text-right" },
               React.createElement('div', { className: "text-xl font-bold text-gray-800" }, currentUser?.name),

@@ -18,7 +18,6 @@
       <h2 class="text-2xl font-bold text-gray-800 mb-6">Generate Game/Activity QR Codes</h2>
       
       <div class="space-y-6">
-        <!-- Instructions -->
         <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
           <h3 class="font-bold text-green-800 mb-3">📋 Instructions:</h3>
           <ol class="space-y-2 text-green-700">
@@ -31,7 +30,6 @@
           </ol>
         </div>
 
-        <!-- Generate Button -->
         <button
           onclick="generateQRCodes()"
           class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-lg"
@@ -39,14 +37,10 @@
           Generate All QR Codes
         </button>
 
-        <!-- QR Code Generation -->
-        <div id="qrCodeContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- QR codes will be generated here -->
-        </div>
+        <div id="qrCodeContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
       </div>
     </div>
 
-    <!-- Additional Information -->
     <div class="bg-white rounded-2xl shadow-lg p-8">
       <h2 class="text-xl font-bold text-gray-800 mb-4">💡 Tips for Best Results</h2>
       <div class="space-y-3 text-gray-700">
@@ -83,32 +77,11 @@
   </div>
 
   <script>
-    // IMPORTANT: These MUST match exactly with the GAMES array in your main app
     const GAMES = [
-      { 
-        id: 'game1', 
-        name: 'Wheel of Fortune', 
-        qrCode: 'GAME1_WHEEL_OF_FORTUNE',
-        icon: '🎡'
-      },
-      { 
-        id: 'game2', 
-        name: 'Memory Card Quiz', 
-        qrCode: 'GAME2_MEMORY_CARD_QUIZ',
-        icon: '🎴'
-      },
-      { 
-        id: 'game3', 
-        name: 'Paper Plane', 
-        qrCode: 'GAME3_PAPER_PLANE',
-        icon: '✈️'
-      },
-      { 
-        id: 'game4', 
-        name: 'Volunteer Tree Experience', 
-        qrCode: 'GAME4_VOLUNTEER_TREE',
-        icon: '🌳'
-      }
+      { id: 'game1', name: 'Wheel of Fortune', qrCode: 'GAME1_WHEEL_OF_FORTUNE', icon: '🎡' },
+      { id: 'game2', name: 'Memory Card Quiz', qrCode: 'GAME2_MEMORY_CARD_QUIZ', icon: '🎴' },
+      { id: 'game3', name: 'Paper Plane', qrCode: 'GAME3_PAPER_PLANE', icon: '✈️' },
+      { id: 'game4', name: 'Volunteer Tree Experience', qrCode: 'GAME4_VOLUNTEER_TREE', icon: '🌳' }
     ];
 
     function generateQRCodes() {
@@ -116,11 +89,9 @@
       container.innerHTML = '';
 
       GAMES.forEach((game, index) => {
-        // Create game card
         const gameCard = document.createElement('div');
         gameCard.className = 'border-4 border-gray-800 rounded-xl p-6 text-center bg-white';
 
-        // Game header
         const header = document.createElement('div');
         header.className = 'mb-4';
         header.innerHTML = `
@@ -131,23 +102,21 @@
         `;
         gameCard.appendChild(header);
 
-        // QR code container
         const qrContainer = document.createElement('div');
         qrContainer.id = `qr-${game.id}`;
         qrContainer.className = 'flex justify-center mb-4 p-4 bg-white';
         gameCard.appendChild(qrContainer);
 
-        // Generate QR code - SIMPLE BLACK AND WHITE
+        // VERY SIMPLE QR CODE - Low complexity, easy to scan
         new QRCode(qrContainer, {
-          text: game.qrCode,  // This is what the scanner will read
-          width: 300,
-          height: 300,
-          colorDark: '#000000',  // Black
-          colorLight: '#ffffff', // White
-          correctLevel: QRCode.CorrectLevel.H
+          text: game.qrCode,
+          width: 180,
+          height: 180,
+          colorDark: '#000000',
+          colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.L  // Low = simpler pattern
         });
 
-        // Info text
         const info = document.createElement('div');
         info.className = 'text-xs text-gray-600 mb-4';
         info.innerHTML = `
@@ -156,7 +125,6 @@
         `;
         gameCard.appendChild(info);
 
-        // Download button
         const downloadBtn = document.createElement('button');
         downloadBtn.className = 'w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-lg font-bold hover:scale-105 transition-all';
         downloadBtn.innerHTML = '⬇️ Download QR Code';
@@ -172,7 +140,6 @@
       const canvas = qrContainer.querySelector('canvas');
       
       if (canvas) {
-        // Create download link
         const link = document.createElement('a');
         link.download = `${gameName.replace(/\s+/g, '_')}_QR.png`;
         link.href = canvas.toDataURL('image/png');
@@ -180,9 +147,8 @@
       }
     }
 
-    // Show instructions on load
     window.addEventListener('load', () => {
-      alert('Click the "Generate All QR Codes" button to create black and white QR codes for each game station.');
+      alert('Click the "Generate All QR Codes" button to create simple black and white QR codes for each game station.');
     });
   </script>
 </body>
