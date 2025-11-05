@@ -10,6 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -236,13 +237,13 @@
       height: 100%;
       background: linear-gradient(
         45deg,
-        #fbbf24 25%,
-        #fcd34d 25%,
-        #fcd34d 50%,
-        #fbbf24 50%,
-        #fbbf24 75%,
-        #fcd34d 75%,
-        #fcd34d
+        #10b981 25%,
+        #3b82f6 25%,
+        #3b82f6 50%,
+        #10b981 50%,
+        #10b981 75%,
+        #3b82f6 75%,
+        #3b82f6
       );
       background-size: 40px 40px;
       animation: progressStripes 1s linear infinite;
@@ -410,7 +411,7 @@
       object-position: center;
       flex-shrink: 0;
       background: #f9fafb;
-      clip-path: inset(10% 0 10% 0);
+      clip-path: inset(3% 0 3% 0);
     }
 
     @media (max-width: 768px) {
@@ -623,6 +624,46 @@
     .modal-btn-confirm:hover {
       background: #ea580c;
     }
+    /* Done badge */
+    .done-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #10b981;
+      color: white;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-left: 6px;
+    }
+
+    /* Completed game card */
+    .game-card.completed {
+      background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+    }
+
+    /* QR Code styling */
+    #qrcode canvas {
+      border: 4px solid #000 !important;
+    }
+    /* Score highlighting */
+    .score-highlight {
+      padding: 8px;
+      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+      font-weight: 600;
+    }
+    
+    .score-highlight.stage {
+      background: #fed7aa;
+      border-color: #f97316;
+    }
+    
+    .score-highlight.game {
+      background: #dbeafe;
+      border-color: #3b82f6;
+    }
+
+
   </style>
 </head>
 <body>
@@ -768,6 +809,12 @@
       const [activeView, setActiveView] = useState('home');
       const [toast, setToast] = useState(null);
       const [modal, setModal] = useState(null);
+      const [leaderboardSearch, setLeaderboardSearch] = useState('');
+      const [adminSearchQuery, setAdminSearchQuery] = useState('');
+      const [adminSortBy, setAdminSortBy] = useState('rank');
+      const [leaderboardSortBy, setLeaderboardSortBy] = useState('rank');
+      const [refreshing, setRefreshing] = useState(false);
+      
       const html5QrCodeRef = useRef(null);
       const isScanning = useRef(false);
 
@@ -794,6 +841,22 @@
             showCancel
           });
         });
+      };
+
+      
+      const refreshScores = () => {
+        setRefreshing(true);
+        const savedParticipants = localStorage.getItem('sevaMelaParticipants');
+        if (savedParticipants) {
+          const parsed = JSON.parse(savedParticipants);
+          setParticipants(parsed);
+          if (currentUser) {
+            const updated = parsed.find(p => p.name === currentUser.name && p.category === currentUser.category);
+            if (updated) setCurrentUser(updated);
+          }
+        }
+        showToast('Scores refreshed!', 'success');
+        setTimeout(() => setRefreshing(false), 500);
       };
 
       const showConfirm = (title, message) => {
@@ -1076,7 +1139,7 @@
             particleCount: 200,
             spread: 70,
             origin: { y: 0.6 },
-            colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#fbbf24']
+            colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#10b981']
           });
 
           setTimeout(() => {
@@ -1164,7 +1227,7 @@
           particleCount: 150,
           spread: 70,
           origin: { y: 0.6 },
-          colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#fbbf24'],
+          colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#10b981'],
           zIndex: 10002
         });
 
@@ -1314,6 +1377,30 @@
           }
         };
         reader.readAsText(file);
+      };
+
+      
+      const getFilteredAdminScores = () => {
+        let filtered = getScoreTableData();
+        
+        // Apply search
+        if (adminSearchQuery && adminSearchQuery.trim()) {
+          const search = adminSearchQuery.toLowerCase();
+          filtered = filtered.filter(p => 
+            p.name.toLowerCase().includes(search) || 
+            p.category.toLowerCase().includes(search)
+          );
+        }
+        
+        // Apply sort
+        if (adminSortBy === 'name') {
+          filtered.sort((a, b) => a.name.localeCompare(b.name));
+        } else {
+          // Sort by rank (total points descending)
+          filtered.sort((a, b) => b.totalPoints - a.totalPoints);
+        }
+        
+        return filtered;
       };
 
       const getScoreTableData = () => {
@@ -1479,8 +1566,8 @@
               }, 'Admin')
             ),
             !isAdmin && React.createElement('div', { className: "text-right" },
-              React.createElement('div', { className: "text-sm font-bold text-gray-800" }, currentUser?.name),
-              React.createElement('div', { className: "text-xs text-gray-500" }, `(${currentUser?.category})`)
+              React.createElement('div', { className: "text-xl font-bold text-gray-800" }, currentUser?.name),
+              React.createElement('div', { className: "text-sm text-gray-500" }, `(${currentUser?.category})`)
             )
           ),
           
@@ -1488,10 +1575,6 @@
           !isAdmin && React.createElement('div', { className: "mt-3 max-w-7xl mx-auto" },
             React.createElement('div', { className: "flex items-center gap-4" },
               React.createElement('div', { className: "flex-1" },
-                React.createElement('div', { className: "flex items-center justify-between mb-1" },
-                  React.createElement('span', { className: "text-xs font-semibold text-gray-600" }, 'Progress'),
-                  React.createElement('span', { className: "text-xs font-bold text-orange-600" }, `${progress}%`)
-                ),
                 React.createElement('div', { className: "progress-bar-container" },
                   React.createElement('div', {
                     className: "progress-fill",
@@ -1518,6 +1601,26 @@
           activeView === 'scores' && isAdmin ? React.createElement('div', null,
             React.createElement('div', { className: "flex items-center justify-between mb-4" },
               React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, 'Player Scores'),
+            React.createElement('div', { className: "bg-white rounded-xl p-4 mb-4 shadow-sm" },
+              React.createElement('div', { className: "flex gap-2 mb-3" },
+                React.createElement('input', {
+                  type: 'text',
+                  placeholder: 'Search players...',
+                  value: adminSearchQuery,
+                  onChange: (e) => setAdminSearchQuery(e.target.value),
+                  className: 'flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-500'
+                }),
+                React.createElement('select', {
+                  value: adminSortBy,
+                  onChange: (e) => setAdminSortBy(e.target.value),
+                  className: 'px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-orange-500'
+                },
+                  React.createElement('option', { value: 'rank' }, 'Sort by Rank'),
+                  React.createElement('option', { value: 'name' }, 'Sort by Name')
+                )
+              )
+            ),
+            
               React.createElement('div', { className: "flex gap-2" },
                 React.createElement('button', {
                   onClick: exportDataAsCSV,
@@ -1548,9 +1651,9 @@
               )
             ),
             React.createElement('div', { className: "space-y-4" },
-              getScoreTableData().length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
+              getFilteredAdminScores().length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
                 React.createElement('p', null, 'No players yet')
-              ) : getScoreTableData().map(player =>
+              ) : getFilteredAdminScores().map(player =>
                 React.createElement('div', { 
                   key: `${player.name}-${player.category}`,
                   className: "bg-white rounded-xl shadow-sm border border-gray-200 p-4"
@@ -1887,6 +1990,13 @@
             },
               React.createElement('div', { style: { fontSize: '24px' } }, '🏆'),
               React.createElement('div', { className: "nav-label" }, 'Board')
+            ),
+            React.createElement('button', {
+              onClick: refreshScores,
+              className: `nav-button ${refreshing ? 'active' : ''}`
+            },
+              React.createElement('div', { style: { fontSize: '24px' } }, '🔄'),
+              React.createElement('div', { className: "nav-label" }, 'Refresh')
             ),
             isAdmin && React.createElement('button', {
               onClick: () => setActiveView(activeView === 'scores' ? 'home' : 'scores'),
