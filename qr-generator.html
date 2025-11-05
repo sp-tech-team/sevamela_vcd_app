@@ -6,6 +6,7 @@
   <title>QR Code Generator - Seva Mela VCD</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 min-h-screen p-8">
   <div class="max-w-4xl mx-auto">
@@ -15,73 +16,45 @@
     </div>
 
     <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Generate Game/Activity QR Codes</h2>
-      
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">Generate Printable QR Codes</h2>
+
       <div class="space-y-6">
         <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6">
           <h3 class="font-bold text-green-800 mb-3">📋 Instructions:</h3>
           <ol class="space-y-2 text-green-700">
-            <li>1. Click "Generate All QR Codes" button below</li>
-            <li>2. Right-click and save each QR code image</li>
-            <li>3. Print the QR codes (recommended size: A4 or 8.5" x 11")</li>
-            <li>4. Place each QR code at its respective game/activity station</li>
-            <li>5. Ensure QR codes are clearly visible and well-lit</li>
-            <li>6. Users scan these codes with the app's scanner</li>
+            <li>1. Click "Generate All QR Codes"</li>
+            <li>2. Then click "Download PDF"</li>
+            <li>3. Print the file — one big QR per A4 page</li>
           </ol>
         </div>
 
-        <button
-          onclick="generateQRCodes()"
-          class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-lg"
-        >
-          Generate All QR Codes
-        </button>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button
+            onclick="generateQRCodes()"
+            class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-lg"
+          >
+            Generate All QR Codes
+          </button>
+
+          <button
+            onclick="downloadPDF()"
+            class="flex-1 bg-gradient-to-r from-emerald-700 to-green-700 text-white py-4 rounded-xl font-bold text-lg hover:scale-105 transition-all shadow-lg"
+          >
+            📄 Download PDF
+          </button>
+        </div>
 
         <div id="qrCodeContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-lg p-8">
-      <h2 class="text-xl font-bold text-gray-800 mb-4">💡 Tips for Best Results</h2>
-      <div class="space-y-3 text-gray-700">
-        <div class="flex items-start gap-3">
-          <span class="text-2xl">📱</span>
-          <div>
-            <p class="font-bold">Mobile-Friendly Scanning</p>
-            <p class="text-sm text-gray-600">Print QR codes at least 3" x 3" for easy scanning from mobile devices</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3">
-          <span class="text-2xl">💡</span>
-          <div>
-            <p class="font-bold">Good Lighting</p>
-            <p class="text-sm text-gray-600">Place QR codes in well-lit areas to ensure quick scanning</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3">
-          <span class="text-2xl">🔒</span>
-          <div>
-            <p class="font-bold">Laminate for Durability</p>
-            <p class="text-sm text-gray-600">Laminate QR codes to protect them during the event</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3">
-          <span class="text-2xl">📍</span>
-          <div>
-            <p class="font-bold">Strategic Placement</p>
-            <p class="text-sm text-gray-600">Mount QR codes at eye level near each game/activity station</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 
   <script>
     const GAMES = [
-      { id: 'game1', name: 'Wheel of Fortune', qrCode: 'GAME1_WHEEL_OF_FORTUNE', icon: '🎡' },
-      { id: 'game2', name: 'Memory Card Quiz', qrCode: 'GAME2_MEMORY_CARD_QUIZ', icon: '🎴' },
-      { id: 'game3', name: 'Paper Plane', qrCode: 'GAME3_PAPER_PLANE', icon: '✈️' },
-      { id: 'game4', name: 'Volunteer Tree Experience', qrCode: 'GAME4_VOLUNTEER_TREE', icon: '🌳' }
+      { id: 'game1', name: 'Spin-tastic', qrCode: 'GAME1_WHEEL_OF_FORTUNE', icon: '🎡' },
+      { id: 'game2', name: 'Decode the Department', qrCode: 'GAME2_MEMORY_CARD_QUIZ', icon: '🎴' },
+      { id: 'game3', name: 'Volunteer Journey', qrCode: 'GAME3_PAPER_PLANE', icon: '✈️' },
+      { id: 'game4', name: 'Anubhava Vriksha', qrCode: 'GAME4_VOLUNTEER_TREE', icon: '🌳' }
     ];
 
     function generateQRCodes() {
@@ -89,66 +62,57 @@
       container.innerHTML = '';
 
       GAMES.forEach((game, index) => {
-        const gameCard = document.createElement('div');
-        gameCard.className = 'border-4 border-gray-800 rounded-xl p-6 text-center bg-white';
+        const card = document.createElement('div');
+        card.className = 'border-4 border-gray-800 rounded-xl p-6 text-center bg-white';
 
-        const header = document.createElement('div');
-        header.className = 'mb-4';
-        header.innerHTML = `
+        card.innerHTML = `
           <div class="text-5xl mb-3">${game.icon}</div>
           <h3 class="text-xl font-bold text-gray-800">${game.name}</h3>
-          <p class="text-sm text-gray-600">Activity ${index + 1}</p>
-          <p class="text-xs font-mono text-gray-500 mt-2 bg-gray-100 p-2 rounded">${game.qrCode}</p>
+          <div id="qr-${game.id}" class="flex justify-center mb-4 p-4 bg-white"></div>
         `;
-        gameCard.appendChild(header);
 
-        const qrContainer = document.createElement('div');
-        qrContainer.id = `qr-${game.id}`;
-        qrContainer.className = 'flex justify-center mb-4 p-4 bg-white';
-        gameCard.appendChild(qrContainer);
+        container.appendChild(card);
 
-        // VERY SIMPLE QR CODE - Low complexity, easy to scan
-        new QRCode(qrContainer, {
+        new QRCode(document.getElementById(`qr-${game.id}`), {
           text: game.qrCode,
-          width: 180,
-          height: 180,
+          width: 220,
+          height: 220,
           colorDark: '#000000',
           colorLight: '#ffffff',
-          correctLevel: QRCode.CorrectLevel.L  // Low = simpler pattern
+          correctLevel: QRCode.CorrectLevel.L
         });
-
-        const info = document.createElement('div');
-        info.className = 'text-xs text-gray-600 mb-4';
-        info.innerHTML = `
-          <p class="font-bold mb-1">Scan this code at the ${game.name} station</p>
-          <p>Users must scan this QR code to unlock the game</p>
-        `;
-        gameCard.appendChild(info);
-
-        const downloadBtn = document.createElement('button');
-        downloadBtn.className = 'w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-lg font-bold hover:scale-105 transition-all';
-        downloadBtn.innerHTML = '⬇️ Download QR Code';
-        downloadBtn.onclick = () => downloadQRCode(game.id, game.name);
-        gameCard.appendChild(downloadBtn);
-
-        container.appendChild(gameCard);
       });
     }
 
-    function downloadQRCode(gameId, gameName) {
-      const qrContainer = document.getElementById(`qr-${gameId}`);
-      const canvas = qrContainer.querySelector('canvas');
-      
-      if (canvas) {
-        const link = document.createElement('a');
-        link.download = `${gameName.replace(/\s+/g, '_')}_QR.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      }
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const pageWidth = 210;
+      const qrWidth = 170; // almost full width
+      const qrX = (pageWidth - qrWidth) / 2;
+
+      GAMES.forEach((game, i) => {
+        if (i > 0) pdf.addPage();
+        const canvas = document.querySelector(`#qr-${game.id} canvas`);
+        if (!canvas) return alert('Please generate QR codes first.');
+
+        const img = canvas.toDataURL('image/png');
+
+        // Big, bold title visible from afar
+        pdf.setFontSize(32);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text(game.name, pageWidth / 2, 35, { align: 'center' });
+
+        // Large QR covering most of page
+        pdf.addImage(img, 'PNG', qrX, 55, qrWidth, qrWidth);
+      });
+
+      pdf.save('SevaMela_QRCodes.pdf');
     }
 
     window.addEventListener('load', () => {
-      alert('Click the "Generate All QR Codes" button to create simple black and white QR codes for each game station.');
+      alert('Click "Generate All QR Codes" → then "Download PDF" to print large QR sheets.');
     });
   </script>
 </body>

@@ -12,6 +12,7 @@
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   
@@ -712,10 +713,106 @@
   <script>
     const { useState, useEffect, useRef } = React;
 
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://picoefnstacccewynahc.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpY29lZm5zdGFjY2Nld3luYWhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxMzg1NDIsImV4cCI6MjA3NDcxNDU0Mn0.UH44tz7g-CTRGpF-FS2Wg4LCHv1LjfBGazGWPvnn0to';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Supabase Helper Functions
+    async function savePlayerToSupabase(player) {
+      try {
+        const { data: playerData, error: playerError } = await supabase
+          .from('players')
+          .upsert({
+            name: player.name,
+            category: player.category,
+            is_admin: player.isAdmin || false
+          }, { onConflict: 'name,category' })
+          .select()
+          .single();
+
+        if (playerError) throw playerError;
+
+        const gameScores = Object.entries(player.games || {}).map(([gameId, gameData]) => ({
+          player_id: playerData.id,
+          game_id: gameId,
+          scanned: gameData.scanned || false,
+          stage_percent: gameData.stagePercent || 0,
+          coins_earned: gameData.coinsEarned || 0,
+          game_percent: gameData.gamePercent || 0
+        }));
+
+        if (gameScores.length > 0) {
+          const { error: scoresError } = await supabase
+            .from('game_scores')
+            .upsert(gameScores, { onConflict: 'player_id,game_id' });
+          if (scoresError) throw scoresError;
+        }
+
+        return playerData;
+      } catch (error) {
+        console.error('Supabase save error:', error);
+        throw error;
+      }
+    }
+
+    async function loadPlayersFromSupabase() {
+      try {
+        const { data: players, error } = await supabase
+          .from('players')
+          .select(`
+            id,
+            name,
+            category,
+            is_admin,
+            game_scores (
+              game_id,
+              scanned,
+              stage_percent,
+              coins_earned,
+              game_percent
+            )
+          `);
+
+        if (error) throw error;
+
+        return players.map(p => ({
+          name: p.name,
+          category: p.category,
+          isAdmin: p.is_admin,
+          games: (p.game_scores || []).reduce((acc, gs) => ({
+            ...acc,
+            [gs.game_id]: {
+              scanned: gs.scanned,
+              stagePercent: gs.stage_percent,
+              coinsEarned: gs.coins_earned,
+              gamePercent: gs.game_percent
+            }
+          }), {})
+        }));
+      } catch (error) {
+        console.error('Supabase load error:', error);
+        return [];
+      }
+    }
+
+    async function deletePlayerFromSupabase(name, category) {
+      try {
+        const { error } = await supabase
+          .from('players')
+          .delete()
+          .match({ name, category });
+        if (error) throw error;
+      } catch (error) {
+        console.error('Supabase delete error:', error);
+        throw error;
+      }
+    }
+
     const GAMES = [
       { 
         id: 'game1', 
-        name: 'Wheel of Fortune', 
+        name: 'Spin-tastic', 
         qrCode: 'GAME1_WHEEL_OF_FORTUNE',
         image: 'wheel_game.png',
         stageName: 'Seeker',
@@ -726,7 +823,7 @@
       },
       { 
         id: 'game2', 
-        name: 'Memory Card Quiz', 
+        name: 'Decode the Department', 
         qrCode: 'GAME2_MEMORY_CARD_QUIZ',
         image: 'memory_card.png',
         stageName: 'Explorer',
@@ -737,7 +834,7 @@
       },
       { 
         id: 'game3', 
-        name: 'Paper Plane', 
+        name: 'Volunteer Journey', 
         qrCode: 'GAME3_PAPER_PLANE',
         image: 'paper_plane.png',
         stageName: 'Wanderer',
@@ -748,7 +845,7 @@
       },
       { 
         id: 'game4', 
-        name: 'Volunteer Tree Experience', 
+        name: 'Anubhava Vriksha', 
         qrCode: 'GAME4_VOLUNTEER_TREE',
         image: 'volunteer_tree.png',
         stageName: 'Yogi',
@@ -844,16 +941,13 @@
       };
 
       
-      const refreshScores = () => {
+      const refreshScores = async () => {
         setRefreshing(true);
-        const savedParticipants = localStorage.getItem('sevaMelaParticipants');
-        if (savedParticipants) {
-          const parsed = JSON.parse(savedParticipants);
-          setParticipants(parsed);
-          if (currentUser) {
-            const updated = parsed.find(p => p.name === currentUser.name && p.category === currentUser.category);
-            if (updated) setCurrentUser(updated);
-          }
+        const players = await loadPlayersFromSupabase();
+        setParticipants(players);
+        if (currentUser) {
+          const updated = players.find(p => p.name === currentUser.name && p.category === currentUser.category);
+          if (updated) setCurrentUser(updated);
         }
         showToast('Scores refreshed!', 'success');
         setTimeout(() => setRefreshing(false), 500);
@@ -879,13 +973,12 @@
       };
 
       useEffect(() => {
-        const savedParticipants = localStorage.getItem('sevaMelaParticipants');
+        const loadData = async () => {
+          const players = await loadPlayersFromSupabase();
+          setParticipants(players);
+        };
+        
         const savedUser = localStorage.getItem('sevaMelaCurrentUser');
-        
-        if (savedParticipants) {
-          setParticipants(JSON.parse(savedParticipants));
-        }
-        
         if (savedUser) {
           const user = JSON.parse(savedUser);
           setCurrentUser(user);
@@ -894,13 +987,13 @@
           setIsAdmin(user.isAdmin);
           setOnboardingComplete(true);
         }
+        
+        loadData();
       }, []);
 
       useEffect(() => {
         if (participants.length > 0) {
-          // NOTE: Using localStorage - on Netlify, this persists per browser
-      // For shared data across users/devices, consider Netlify Functions + external DB
-      localStorage.setItem('sevaMelaParticipants', JSON.stringify(participants));
+          participants.forEach(p => savePlayerToSupabase(p).catch(console.error));
         }
       }, [participants]);
 
@@ -1051,6 +1144,7 @@
         };
 
         const updatedParticipants = [...participants, newUser];
+        savePlayerToSupabase(newUser).catch(console.error);
         setParticipants(updatedParticipants);
         setCurrentUser(newUser);
         setUserName(finalName);
@@ -1216,6 +1310,8 @@
           return p;
         });
 
+        const updated = updatedParticipants.find(p => p.name === participantName && p.category === participantCategory);
+        if (updated) savePlayerToSupabase(updated).catch(console.error);
         setParticipants(updatedParticipants);
         
         confetti({
@@ -1283,6 +1379,7 @@
         }
 
         const result = await showConfirm('Delete Player', `Remove ${playerName} (${playerCategory})?`);
+          await deletePlayerFromSupabase(playerName, playerCategory).catch(console.error);
         if (result) {
           const updatedParticipants = participants.filter(
             p => !(p.name === playerName && p.category === playerCategory)
@@ -1616,34 +1713,6 @@
               )
             ),
             
-              React.createElement('div', { className: "flex gap-2" },
-                React.createElement('button', {
-                  onClick: exportDataAsCSV,
-                  className: "flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition-all"
-                },
-                  React.createElement(Icon, { name: 'Download', size: 16 }),
-                  'Export CSV'
-                ),
-                React.createElement('label', {
-                  className: "flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition-all cursor-pointer"
-                },
-                  React.createElement(Icon, { name: 'Upload', size: 16 }),
-                  'Import CSV',
-                  React.createElement('input', {
-                    type: "file",
-                    accept: ".csv",
-                    onChange: importDataFromCSV,
-                    className: "hidden"
-                  })
-                ),
-                React.createElement('button', {
-                  onClick: handleRefresh,
-                  className: "flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
-                },
-                  React.createElement(Icon, { name: 'RotateCw', size: 16 }),
-                  'Refresh'
-                )
-              )
             ),
             React.createElement('div', { className: "space-y-4" },
               getFilteredAdminScores().length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
@@ -1662,11 +1731,11 @@
                     React.createElement('div', { className: "text-2xl font-bold text-orange-600" }, `${player.totalPoints}%`)
                   ),
                   // Game scores grid
-                  React.createElement('div', { className: "grid grid-cols-2 gap-3" },
+                  React.createElement('div', { className: "grid grid-cols-2 sm:grid-cols-2 gap-2" },
                     player.gameScores.map(score =>
                       React.createElement('div', { 
                         key: score.gameId,
-                        className: `p-3 rounded-lg ${score.scanned ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50 border border-gray-200'}`
+                        className: `p-2 rounded-lg ${score.scanned ? 'bg-orange-50 border border-orange-200' : 'bg-gray-50 border border-gray-200'}`
                       },
                         React.createElement('div', { className: "text-xs font-semibold text-gray-700 mb-1" }, score.gameName),
                         score.scanned 
