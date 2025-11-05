@@ -473,7 +473,7 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.5rem 1rem;
-      background: #f3f4f8;
+      background: #f3f4f6;
       border-radius: 12px;
       font-size: 0.875rem;
     }
@@ -898,7 +898,9 @@
 
       useEffect(() => {
         if (participants.length > 0) {
-          localStorage.setItem('sevaMelaParticipants', JSON.stringify(participants));
+          // NOTE: Using localStorage - on Netlify, this persists per browser
+      // For shared data across users/devices, consider Netlify Functions + external DB
+      localStorage.setItem('sevaMelaParticipants', JSON.stringify(participants));
         }
       }, [participants]);
 
@@ -1555,7 +1557,7 @@
                 React.createElement('p', { className: "text-sm text-orange-600 font-medium" }, 'VCD Department')
               ),
               isAdmin && React.createElement('div', { className: "text-right" },
-              React.createElement('div', { className: "text-xl font-bold text-gray-800 bg-orange-100 px-3 py-1 rounded-lg border-2 border-orange-400" }, 'Admin')
+              React.createElement('div', { className: "text-xl font-bold text-gray-800 bg-orange-100 px-4 py-1 rounded-full border-2 border-orange-400" }, 'Admin')
             )
             ),
             !isAdmin && React.createElement('div', { className: "text-right" },
@@ -1990,6 +1992,13 @@
             },
               React.createElement('div', { style: { fontSize: '24px' } }, '🔄'),
               React.createElement('div', { className: "nav-label" }, 'Refresh')
+            ),
+            isAdmin && React.createElement('button', {
+              onClick: () => setActiveView('home'),
+              className: `nav-button ${activeView === 'home' ? 'active' : ''}`
+            },
+              React.createElement('div', { style: { fontSize: '24px' } }, '🏠'),
+              React.createElement('div', { className: "nav-label" }, 'Home')
             ),
             isAdmin && React.createElement('button', {
               onClick: () => setActiveView(activeView === 'scores' ? 'home' : 'scores'),
