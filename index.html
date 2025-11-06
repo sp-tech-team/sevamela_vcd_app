@@ -903,7 +903,7 @@
         image: 'memory_card.png',
         stageName: 'Explorer',
         stageSlogan: 'Exploration leads to inner discovery',
-        stagePoints: 15,
+        stagePoints: 10,
         gamePoints: 15,
         maxCoins: 60
       },
@@ -914,7 +914,7 @@
         image: 'volunteer_journey.png',
         stageName: 'Wanderer',
         stageSlogan: 'Wandering the path, finding your way home',
-        stagePoints: 20,
+        stagePoints: 10,
         gamePoints: 30,
         maxCoins: 175
       },
@@ -925,7 +925,7 @@
         image: 'volunteer_tree.png',
         stageName: 'Yogi',
         stageSlogan: 'The Yogi serves, transforms, and transcends',
-        stagePoints: 0,
+        stagePoints: 15,
         gamePoints: 0,
         maxCoins: 0
       }
@@ -940,6 +940,7 @@
       'Brahmachari',
       'Sevadhar',
       'Samskriti',
+      'Visitor',
       'Admin'
     ];
 
@@ -1106,12 +1107,6 @@
         
         loadData();
       }, []);
-
-      useEffect(() => {
-        if (participants.length > 0) {
-          participants.filter(p => !p.isAdmin).forEach(p => savePlayerToSupabase(p).catch(console.error));
-        }
-      }, [participants]);
 
       useEffect(() => {
         if (currentUser) {
@@ -1372,6 +1367,10 @@
             p.name === currentUser.name && p.category === currentUser.category ? updatedUser : p
           );
           setParticipants(updatedParticipants);
+          localStorage.setItem('sevaMelaParticipants', JSON.stringify(updatedParticipants));
+          
+          // Save to Supabase
+          savePlayerToSupabase(updatedUser).catch(console.error);
 
           const scannedCount = Object.values(updatedUser.games).filter(g => g.scanned).length;
           let totalPercent = 0;
@@ -1511,22 +1510,17 @@
             if (b.totalPercentage !== a.totalPercentage) {
               return b.totalPercentage - a.totalPercentage;
             }
-            // Secondary sort by name for stability
             return a.name.localeCompare(b.name);
           });
         
-        // Assign ranks based on percentage only
-        let currentRank = 1;
+        // Dense ranking: 1,2,3,4,4,5 (not 1,2,3,4,4,6)
+        let currentRank = 0;
         let previousPercentage = null;
-        let playersAtCurrentRank = 0;
         
-        const rankedAll = allSorted.map((player, index) => {
-          if (previousPercentage === null || player.totalPercentage < previousPercentage) {
-            currentRank = currentRank + playersAtCurrentRank;
-            playersAtCurrentRank = 1;
+        const rankedAll = allSorted.map((player) => {
+          if (previousPercentage === null || player.totalPercentage !== previousPercentage) {
+            currentRank++;
             previousPercentage = player.totalPercentage;
-          } else {
-            playersAtCurrentRank++;
           }
           return { ...player, rank: currentRank };
         });
@@ -1803,7 +1797,7 @@
 
       const progress = calculateProgress();
       const leaderboard = getLeaderboard();
-      const currentUserRank = leaderboard.findIndex(l => l.name === currentUser?.name && l.category === currentUser?.category) + 1;
+      const currentUserRank = leaderboard.find(l => l.name === currentUser?.name && l.category === currentUser?.category)?.rank || 0;
 
       return React.createElement('div', { className: "min-h-screen bg-gray-50" },
         // Toast Notification
@@ -1927,8 +1921,8 @@
                         React.createElement('div', { className: "text-xs font-semibold text-gray-700 mb-1" }, score.gameName),
                         score.scanned 
                           ? React.createElement('div', { className: "flex flex-col gap-1" },
-                              score.gamePercent > 0 && React.createElement('div', { className: "font-bold text-base text-green-600" }, `G:${score.gamePercent}%`),
-                              React.createElement('div', { className: "font-bold text-base text-orange-600" }, `S:${score.stagePercent}%`)
+                              score.gamePercent > 0 && React.createElement('div', { className: "font-bold text-sm text-green-600" }, `Game: ${score.gamePercent}%`),
+                              React.createElement('div', { className: "font-bold text-sm text-orange-600" }, `Stage: ${score.stagePercent}%`)
                             )
                           : React.createElement('div', { className: 'text-xs text-gray-400' }, 'Not started')
                       )
@@ -2119,7 +2113,7 @@
             leaderboard.length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-12" },
               React.createElement('p', null, 'No participants yet')
             ) : React.createElement('div', { className: "space-y-3" },
-              leaderboard.map((player) => {
+              leaderboard.map((player, index) => {
                 const getTrophyEmoji = (rank) => {
                   if (rank === 1) return '🥇';
                   if (rank === 2) return '🥈';
@@ -2140,6 +2134,7 @@
                 },
                   React.createElement('div', { className: "flex justify-between items-center" },
                     React.createElement('div', { className: "flex items-center gap-3" },
+                      React.createElement('div', { className: "text-sm font-bold text-gray-400 min-w-[2rem]" }, `${index + 1}.`),
                       React.createElement('div', { className: `text-3xl ${getTrophyColor(player.rank)}` },
                         getTrophyEmoji(player.rank)
                       ),
