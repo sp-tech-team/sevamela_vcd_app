@@ -940,7 +940,6 @@
       'Brahmachari',
       'Sevadhar',
       'Samskriti',
-      'Visitor',
       'Admin'
     ];
 
@@ -977,6 +976,7 @@
       const [showLeaderboard, setShowLeaderboard] = useState(false);
       const [showQRScanner, setShowQRScanner] = useState(false);
       const [selectedGame, setSelectedGame] = useState(null);
+      const [gameModalSearch, setGameModalSearch] = useState('');
       const [successModalData, setSuccessModalData] = useState(null);
       const [activeView, setActiveView] = useState('home');
       const [toast, setToast] = useState(null);
@@ -1095,24 +1095,10 @@
           setParticipants(players);
         };
         
-        const savedUser = localStorage.getItem('sevaMelaCurrentUser');
-        if (savedUser) {
-          const user = JSON.parse(savedUser);
-          setCurrentUser(user);
-          setUserName(user.name);
-          setUserCategory(user.category);
-          setIsAdmin(user.isAdmin);
-          setOnboardingComplete(true);
-        }
-        
         loadData();
       }, []);
 
-      useEffect(() => {
-        if (currentUser) {
-          localStorage.setItem('sevaMelaCurrentUser', JSON.stringify(currentUser));
-        }
-      }, [currentUser]);
+
 
       useEffect(() => {
         // Create falling confetti particles
@@ -1367,7 +1353,6 @@
             p.name === currentUser.name && p.category === currentUser.category ? updatedUser : p
           );
           setParticipants(updatedParticipants);
-          localStorage.setItem('sevaMelaParticipants', JSON.stringify(updatedParticipants));
           
           // Save to Supabase
           savePlayerToSupabase(updatedUser).catch(console.error);
@@ -1442,6 +1427,14 @@
         } else {
           setShowQRScanner(false);
         }
+      };
+
+      const discardPlayer = async (participantName, participantCategory, gameId) => {
+        const result = await showConfirm('Discard Player', `Award 0% to ${participantName}? They will be removed from pending list.`);
+        if (result) {
+          return awardGamePoints(participantName, participantCategory, gameId, 0);
+        }
+        return false;
       };
 
       const awardGamePoints = (participantName, participantCategory, gameId, coins) => {
@@ -1534,21 +1527,6 @@
         );
       };
 
-      const handleRefresh = () => {
-        const savedParticipants = localStorage.getItem('sevaMelaParticipants');
-        const savedUser = localStorage.getItem('sevaMelaCurrentUser');
-        
-        if (savedParticipants) {
-          setParticipants(JSON.parse(savedParticipants));
-        }
-        
-        if (savedUser) {
-          setCurrentUser(JSON.parse(savedUser));
-        }
-        
-        alert('Data refreshed!');
-      };
-
       const deletePlayer = async (playerName, playerCategory) => {
         if (!isAdmin) {
           showToast('Admin only', 'error');
@@ -1563,8 +1541,7 @@
               p => !(p.name === playerName && p.category === playerCategory)
             );
             setParticipants(updatedParticipants);
-            localStorage.setItem('sevaMelaParticipants', JSON.stringify(updatedParticipants));
-            showToast('Player deleted from database and local', 'success');
+            showToast('Player deleted from database', 'success');
           } catch (error) {
             showToast('Delete failed: ' + error.message, 'error');
           }
@@ -2185,6 +2162,14 @@
               )
             ),
 
+            React.createElement('input', {
+              type: 'text',
+              placeholder: 'Search players...',
+              value: gameModalSearch,
+              onChange: (e) => setGameModalSearch(e.target.value),
+              className: 'w-full px-4 py-2 border-2 border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-orange-500'
+            }),
+
             React.createElement('h4', { className: "font-bold text-gray-700 mb-4" }, 'Pending Players'),
 
             React.createElement('div', { className: "space-y-4" },
@@ -2194,15 +2179,27 @@
                 if (!p.games[selectedGame.id].scanned) return false;
                 if (selectedGame.gamePoints <= 0) return false;
                 if (p.games[selectedGame.id].coinsEarned > 0) return false;
+                if (gameModalSearch && gameModalSearch.trim()) {
+                  const search = gameModalSearch.toLowerCase();
+                  if (!p.name.toLowerCase().includes(search) && !p.category.toLowerCase().includes(search)) {
+                    return false;
+                  }
+                }
                 return true;
               }).length === 0 ? React.createElement('div', { className: "text-center text-gray-500 py-8" },
-                React.createElement('p', null, 'No pending players')
+                React.createElement('p', null, gameModalSearch ? 'No matching players' : 'No pending players')
               ) : participants.filter(p => {
                 if (!p || p.isAdmin) return false;
                 if (!p.games || !p.games[selectedGame.id]) return false;
                 if (!p.games[selectedGame.id].scanned) return false;
                 if (selectedGame.gamePoints <= 0) return false;
                 if (p.games[selectedGame.id].coinsEarned > 0) return false;
+                if (gameModalSearch && gameModalSearch.trim()) {
+                  const search = gameModalSearch.toLowerCase();
+                  if (!p.name.toLowerCase().includes(search) && !p.category.toLowerCase().includes(search)) {
+                    return false;
+                  }
+                }
                 return true;
               }).map(player => 
                 React.createElement('div', {
@@ -2234,7 +2231,15 @@
                         }
                       },
                       className: "px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-bold hover:scale-105 transition-all"
-                    }, 'Award')
+                    }, 'Award'),
+                    React.createElement('button', {
+                      onClick: async () => {
+                        if (await discardPlayer(player.name, player.category, selectedGame.id)) {
+                          showToast(`${player.name} discarded (0%)`, 'info');
+                        }
+                      },
+                      className: "px-4 py-2 bg-gray-400 text-white rounded-lg font-bold hover:bg-gray-500 transition-all"
+                    }, 'Discard')
                   )
                 )
               )
@@ -2284,7 +2289,6 @@
               onClick: async () => {
                 const result = await showConfirm('Logout', 'Are you sure you want to logout?');
                 if (result) {
-                  localStorage.removeItem('sevaMelaCurrentUser');
                   window.location.reload();
                 }
               },
