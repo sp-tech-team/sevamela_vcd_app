@@ -53,8 +53,8 @@
     const GAMES = [
       { id: 'game1', name: 'Spin-tastic', qrCode: 'GAME1_WHEEL_OF_FORTUNE', icon: '🎡' },
       { id: 'game2', name: 'Decode the Department', qrCode: 'GAME2_MEMORY_CARD_QUIZ', icon: '🎴' },
-      { id: 'game3', name: 'Volunteer Journey', qrCode: 'GAME3_PAPER_PLANE', icon: '✈️' },
-      { id: 'game4', name: 'Anubhava Vriksha', qrCode: 'GAME4_VOLUNTEER_TREE', icon: '🌳' }
+      { id: 'game3', name: 'Volunteer Voyage', qrCode: 'GAME3_PAPER_PLANE', icon: '✈️' },
+      { id: 'game4', name: 'Anubhav Vriksha', qrCode: 'GAME4_VOLUNTEER_TREE', icon: '🌳' }
     ];
 
     function generateQRCodes() {
@@ -99,10 +99,10 @@
 
         const img = canvas.toDataURL('image/png');
 
-        // Big, bold title visible from afar
-        pdf.setFontSize(32);
+        // Bigger, bolder title - very visible from far
+        pdf.setFontSize(48);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(game.name, pageWidth / 2, 35, { align: 'center' });
+        pdf.text(game.name, pageWidth / 2, 30, { align: 'center' });
 
         // Large QR covering most of page
         pdf.addImage(img, 'PNG', qrX, 55, qrWidth, qrWidth);

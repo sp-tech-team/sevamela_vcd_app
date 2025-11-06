@@ -62,12 +62,13 @@
       inset: 0;
       pointer-events: none;
       overflow: hidden;
+      z-index: 1;
     }
 
     .splash-confetti {
       position: absolute;
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
     }
 
@@ -851,11 +852,32 @@
 
     async function deletePlayerFromSupabase(name, category) {
       try {
-        const { error } = await supabase
+        // First get the player ID
+        const { data: player, error: findError } = await supabase
+          .from('players')
+          .select('id')
+          .eq('name', name)
+          .eq('category', category)
+          .single();
+        
+        if (findError) throw findError;
+        if (!player) throw new Error('Player not found');
+        
+        // Delete game scores first (CASCADE should handle this, but being explicit)
+        const { error: scoresError } = await supabase
+          .from('game_scores')
+          .delete()
+          .eq('player_id', player.id);
+        
+        if (scoresError) throw scoresError;
+        
+        // Then delete the player
+        const { error: deleteError } = await supabase
           .from('players')
           .delete()
-          .match({ name, category });
-        if (error) throw error;
+          .eq('id', player.id);
+          
+        if (deleteError) throw deleteError;
       } catch (error) {
         console.error('Supabase delete error:', error);
         throw error;
@@ -871,8 +893,8 @@
         stageName: 'Seeker',
         stageSlogan: 'The first step is seeking the truth within',
         stagePoints: 10,
-        gamePoints: 20,
-        maxCoins: 100
+        gamePoints: 10,
+        maxCoins: 30
       },
       { 
         id: 'game2', 
@@ -881,29 +903,29 @@
         image: 'memory_card.png',
         stageName: 'Explorer',
         stageSlogan: 'Exploration leads to inner discovery',
-        stagePoints: 10,
-        gamePoints: 20,
-        maxCoins: 100
+        stagePoints: 15,
+        gamePoints: 15,
+        maxCoins: 60
       },
       { 
         id: 'game3', 
-        name: 'Volunteer Journey', 
+        name: 'Volunteer Voyage', 
         qrCode: 'GAME3_PAPER_PLANE',
         image: 'volunteer_journey.png',
         stageName: 'Wanderer',
         stageSlogan: 'Wandering the path, finding your way home',
-        stagePoints: 10,
-        gamePoints: 15,
-        maxCoins: 100
+        stagePoints: 20,
+        gamePoints: 30,
+        maxCoins: 175
       },
       { 
         id: 'game4', 
-        name: 'Anubhava Vriksha', 
+        name: 'Anubhav Vriksha', 
         qrCode: 'GAME4_VOLUNTEER_TREE',
         image: 'volunteer_tree.png',
         stageName: 'Yogi',
         stageSlogan: 'The Yogi serves, transforms, and transcends',
-        stagePoints: 15,
+        stagePoints: 0,
         gamePoints: 0,
         maxCoins: 0
       }
@@ -921,7 +943,7 @@
       'Admin'
     ];
 
-    const ADMIN_PIN = '1234';
+    const ADMIN_PIN = '3020';
 
     function Icon({ name, size = 24, className = "" }) {
       const iconRef = useRef(null);
@@ -1101,26 +1123,28 @@
         // Create falling confetti particles
         const confettiContainer = document.getElementById('splash-confetti-container');
         if (confettiContainer) {
-          const colors = ['#f97316', '#fb923c', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f472b6'];
-          for (let i = 0; i < 50; i++) {
+          const colors = ['#f97316', '#fb923c', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa', '#f472b6', '#ec4899'];
+          for (let i = 0; i < 80; i++) {
             const confetti = document.createElement('div');
             confetti.className = 'splash-confetti';
             confetti.style.left = Math.random() * 100 + '%';
-            confetti.style.top = -20 + 'px';
+            confetti.style.top = -Math.random() * 100 + 'px';
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.animationDelay = (Math.random() * 3) + 's';
-            confetti.style.animation = `confettiFall ${3 + Math.random() * 2}s linear infinite`;
+            confetti.style.animationDelay = (Math.random() * 2) + 's';
+            confetti.style.animation = `confettiFall ${2.5 + Math.random() * 2}s linear infinite`;
+            confetti.style.width = (8 + Math.random() * 8) + 'px';
+            confetti.style.height = confetti.style.width;
             confettiContainer.appendChild(confetti);
           }
         }
 
         const confettiTimer = setTimeout(() => {
           confetti({
-            particleCount: 100,
-            spread: 70,
+            particleCount: 150,
+            spread: 90,
             origin: { y: 0.6 }
           });
-        }, 500);
+        }, 300);
         
         const timer = setTimeout(() => {
           const splash = document.getElementById('splash-screen');
@@ -1193,7 +1217,7 @@
 
         const trimmedName = userName.trim();
         const existingUser = participants.find(p => 
-          p.name === trimmedName && p.category === userCategory
+          p.name.toLowerCase() === trimmedName.toLowerCase() && p.category === userCategory
         );
         
         if (existingUser) {
@@ -1483,12 +1507,26 @@
               totalPercentage: Math.min(100, Math.round(totalPercent))
             };
           })
-          .sort((a, b) => b.totalPercentage - a.totalPercentage);
+          .sort((a, b) => {
+            if (b.totalPercentage !== a.totalPercentage) {
+              return b.totalPercentage - a.totalPercentage;
+            }
+            // Secondary sort by name for stability
+            return a.name.localeCompare(b.name);
+          });
         
+        // Assign ranks based on percentage only
         let currentRank = 1;
+        let previousPercentage = null;
+        let playersAtCurrentRank = 0;
+        
         const rankedAll = allSorted.map((player, index) => {
-          if (index > 0 && allSorted[index - 1].totalPercentage !== player.totalPercentage) {
-            currentRank = index + 1;
+          if (previousPercentage === null || player.totalPercentage < previousPercentage) {
+            currentRank = currentRank + playersAtCurrentRank;
+            playersAtCurrentRank = 1;
+            previousPercentage = player.totalPercentage;
+          } else {
+            playersAtCurrentRank++;
           }
           return { ...player, rank: currentRank };
         });
@@ -1712,7 +1750,7 @@
                   userName.trim() && userCategory && (() => {
                     const trimmedName = userName.trim();
                     const exactMatch = participants.find(p => 
-                      p.name === trimmedName && p.category === userCategory
+                      p.name.toLowerCase() === trimmedName.toLowerCase() && p.category === userCategory
                     );
                     
                     if (exactMatch) {
