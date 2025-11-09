@@ -1,6 +1,7 @@
 # Seva Mela 2025 - Event Management System
 
 Gamified event management with QR scanning, real-time scoring, and admin controls.
+Website link: https://vcd-sevamela.netlify.app
 
 ## 📁 Project Files
 
