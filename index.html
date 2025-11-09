@@ -793,7 +793,7 @@
           scanned: gameData.scanned || false,
           stage_percent: gameData.stagePercent || 0,
           coins_earned: gameData.coinsEarned || 0,
-          game_percent: gameData.gamePercent || 0
+          game_percent: gameData.hasBeenAwarded ? (gameData.gamePercent || 0) : null
         }));
 
         if (gameScores.length > 0) {
@@ -830,20 +830,40 @@
 
         if (error) throw error;
 
-        return players.map(p => ({
-          name: p.name,
-          category: p.category,
-          isAdmin: p.is_admin,
-          games: (p.game_scores || []).reduce((acc, gs) => ({
+        return players.map(p => {
+          // Initialize all games with default values
+          const allGames = GAMES.reduce((acc, game) => ({
+            ...acc,
+            [game.id]: {
+              scanned: false,
+              stagePercent: 0,
+              coinsEarned: 0,
+              gamePercent: 0,
+              hasBeenAwarded: false
+            }
+          }), {});
+          
+          // Overlay actual game scores from DB  
+          const dbGames = (p.game_scores || []).reduce((acc, gs) => ({
             ...acc,
             [gs.game_id]: {
               scanned: gs.scanned,
               stagePercent: gs.stage_percent,
               coinsEarned: gs.coins_earned,
-              gamePercent: gs.game_percent
+              gamePercent: gs.game_percent === null ? 0 : gs.game_percent,
+              // Use game_percent null/undefined to indicate "not yet awarded"
+              // Once awarded (even 0), it will have a value
+              hasBeenAwarded: gs.game_percent !== null && gs.game_percent !== undefined
             }
-          }), {})
-        }));
+          }), {});
+          
+          return {
+            name: p.name,
+            category: p.category,
+            isAdmin: p.is_admin,
+            games: { ...allGames, ...dbGames }
+          };
+        });
       } catch (error) {
         console.error('Supabase load error:', error);
         return [];
@@ -940,6 +960,7 @@
       'Brahmachari',
       'Sevadhar',
       'Samskriti',
+      'Visitor',
       'Admin'
     ];
 
@@ -986,6 +1007,9 @@
       const [adminSortBy, setAdminSortBy] = useState('rank');
       const [leaderboardSortBy, setLeaderboardSortBy] = useState('rank');
       const [refreshing, setRefreshing] = useState(false);
+      const [autoRefreshInterval, setAutoRefreshInterval] = useState(null);
+      const [adminAutoUpdateInterval, setAdminAutoUpdateInterval] = useState(null);
+      const [hasShownEnlightenment, setHasShownEnlightenment] = useState(false);
       
       const html5QrCodeRef = useRef(null);
       const isScanning = useRef(false);
@@ -1016,8 +1040,8 @@
       };
 
       
-      const refreshScores = async () => {
-        setRefreshing(true);
+      const refreshScores = async (silent = false) => {
+        if (!silent) setRefreshing(true);
         const oldParticipants = participants;
         const players = await loadPlayersFromSupabase();
         setParticipants(players);
@@ -1034,6 +1058,7 @@
               
               if (newGamePercent > oldGamePercent) {
                 hasUpdate = true;
+                if (!silent) {
                 setSuccessModalData({
                   game: game,
                   isGamePoints: true,
@@ -1051,22 +1076,23 @@
                 setTimeout(() => {
                   setSuccessModalData(null);
                 }, 4000);
+                }
               }
             });
             setCurrentUser(updated);
             
             if (!hasUpdate) {
-              showToast('Scores refreshed!', 'success');
+              if (!silent) showToast('Scores refreshed!', 'success');
             }
           } else if (updated) {
             setCurrentUser(updated);
-            showToast('Scores refreshed!', 'success');
+            if (!silent) showToast('Scores refreshed!', 'success');
           }
         } else {
-          showToast('Scores refreshed!', 'success');
+          if (!silent) showToast('Scores refreshed!', 'success');
         }
         
-        setTimeout(() => setRefreshing(false), 500);
+        if (!silent) setTimeout(() => setRefreshing(false), 500);
       };
 
 
@@ -1093,10 +1119,144 @@
         const loadData = async () => {
           const players = await loadPlayersFromSupabase();
           setParticipants(players);
+          
+          // Restore session if exists
+          const savedSession = localStorage.getItem('sevaMelaSession');
+          if (savedSession) {
+            try {
+              const session = JSON.parse(savedSession);
+              const sessionAge = Date.now() - session.timestamp;
+              
+              // Session valid for 7 days
+              if (sessionAge < 7 * 24 * 60 * 60 * 1000) {
+                if (session.isAdmin) {
+                  setCurrentUser(session.user);
+                  setUserName('Admin');
+                  setIsAdmin(true);
+                  setOnboardingComplete(true);
+                  setShowSplash(false);
+                } else {
+                  // Find latest user data from Supabase
+                  const userFromDb = players.find(p => 
+                    p.name === session.user.name && p.category === session.user.category
+                  );
+                  if (userFromDb) {
+                    setCurrentUser(userFromDb);
+                    setUserName(userFromDb.name);
+                    setUserCategory(userFromDb.category);
+                    setIsAdmin(false);
+                    setOnboardingComplete(true);
+                    setShowSplash(false);
+                  }
+                }
+              } else {
+                localStorage.removeItem('sevaMelaSession');
+              }
+            } catch (e) {
+              localStorage.removeItem('sevaMelaSession');
+            }
+          }
         };
         
         loadData();
       }, []);
+
+      // Auto-refresh mechanism for users when not admin
+      useEffect(() => {
+        if (!isAdmin && currentUser) {
+          const interval = setInterval(() => {
+            refreshScores(true); // Silent refresh
+          }, 5000); // Check every 5 seconds
+          setAutoRefreshInterval(interval);
+          return () => clearInterval(interval);
+        }
+      }, [isAdmin, currentUser]);
+
+      // Auto-update pending players for admin (both home view and game modal)
+      useEffect(() => {
+        if (isAdmin && onboardingComplete) {
+          const interval = setInterval(async () => {
+            const players = await loadPlayersFromSupabase();
+            setParticipants(players);
+          }, 5000);
+          return () => clearInterval(interval);
+        }
+      }, [isAdmin, onboardingComplete]);
+
+      // Enlightenment celebration when all games complete
+      useEffect(() => {
+        if (!isAdmin && currentUser && !hasShownEnlightenment) {
+          if (isAllGamesComplete()) {
+            setHasShownEnlightenment(true);
+            
+            setTimeout(() => {
+              // Simple confetti burst like other celebrations
+              confetti({
+                particleCount: 300,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#10b981', '#fbbf24'],
+                zIndex: 10002
+              });
+              
+              // Show enlightenment modal similar to success modal
+              setSuccessModalData({
+                game: { name: 'Journey Complete' },
+                isGamePoints: false,
+                isEnlightenment: true,
+                pointsEarned: 0
+              });
+              
+              // Auto-close after 5 seconds
+              setTimeout(() => {
+                setSuccessModalData(null);
+              }, 5000);
+            }, 500);
+          }
+        }
+      }, [currentUser, isAdmin, hasShownEnlightenment]);
+
+      // Check for score updates on page reload
+      useEffect(() => {
+        if (currentUser && !currentUser.isAdmin) {
+          const storedUser = localStorage.getItem('currentUserState');
+          if (storedUser) {
+            const parsed = JSON.parse(storedUser);
+            if (parsed.name === currentUser.name && parsed.category === currentUser.category) {
+              // Check if there are any updates
+              GAMES.forEach(game => {
+                const oldGamePercent = parsed.games[game.id]?.gamePercent || 0;
+                const newGamePercent = currentUser.games[game.id]?.gamePercent || 0;
+                
+                if (newGamePercent > oldGamePercent && newGamePercent > 0) {
+                  // Show confetti and success modal for score update
+                  setTimeout(() => {
+                    setSuccessModalData({
+                      game: game,
+                      isGamePoints: true,
+                      pointsEarned: newGamePercent - oldGamePercent
+                    });
+                    
+                    confetti({
+                      particleCount: 150,
+                      spread: 70,
+                      origin: { y: 0.6 },
+                      colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#10b981'],
+                      zIndex: 10002
+                    });
+                    
+                    setTimeout(() => {
+                      setSuccessModalData(null);
+                    }, 4000);
+                  }, 500);
+                }
+              });
+            }
+          }
+          // Update stored state
+          localStorage.setItem('currentUserState', JSON.stringify(currentUser));
+        }
+      }, [currentUser]);
 
 
 
@@ -1174,7 +1334,8 @@
                 scanned: false,
                 stagePercent: 0,
                 coinsEarned: 0,
-                gamePercent: 0
+                gamePercent: 0,
+                hasBeenAwarded: false
               }
             }), {})
           };
@@ -1183,6 +1344,11 @@
           setUserName('Admin');
           setIsAdmin(true);
           setOnboardingComplete(true);
+          localStorage.setItem('sevaMelaSession', JSON.stringify({
+            user: adminUser,
+            isAdmin: true,
+            timestamp: Date.now()
+          }));
           confetti({
             particleCount: 200,
             spread: 70,
@@ -1206,6 +1372,11 @@
           setUserName(existingUser.name);
           setIsAdmin(existingUser.isAdmin);
           setOnboardingComplete(true);
+          localStorage.setItem('sevaMelaSession', JSON.stringify({
+            user: existingUser,
+            isAdmin: existingUser.isAdmin,
+            timestamp: Date.now()
+          }));
           showToast(`Welcome back, ${trimmedName}!`, 'info');
           confetti({
             particleCount: 150,
@@ -1276,7 +1447,8 @@
               scanned: false,
               stagePercent: 0,
               coinsEarned: 0,
-              gamePercent: 0
+              gamePercent: 0,
+              hasBeenAwarded: false
             }
           }), {})
         };
@@ -1288,6 +1460,11 @@
         setUserName(finalName);
         setIsAdmin(false);
         setOnboardingComplete(true);
+        localStorage.setItem('sevaMelaSession', JSON.stringify({
+          user: newUser,
+          isAdmin: false,
+          timestamp: Date.now()
+        }));
         confetti({
           particleCount: 200,
           spread: 70,
@@ -1307,6 +1484,14 @@
         });
         
         return Math.min(100, Math.round(totalPercent));
+      };
+
+      const isAllGamesComplete = () => {
+        if (!currentUser || isAdmin) return false;
+        return GAMES.every(game => {
+          const gameData = currentUser.games[game.id];
+          return gameData && gameData.scanned && (game.gamePoints === 0 || gameData.hasBeenAwarded);
+        });
       };
 
       const handleQRScan = (decodedText) => {
@@ -1430,7 +1615,7 @@
       };
 
       const discardPlayer = async (participantName, participantCategory, gameId) => {
-        const result = await showConfirm('Discard Player', `Award 0% to ${participantName}? They will be removed from pending list.`);
+        const result = await showConfirm('Discard Player', `Award 0% to ${participantName}?`);
         if (result) {
           return awardGamePoints(participantName, participantCategory, gameId, 0);
         }
@@ -1456,7 +1641,8 @@
                 [gameId]: {
                   ...p.games[gameId],
                   coinsEarned: coins,
-                  gamePercent: gamePercent
+                  gamePercent: gamePercent,
+                  hasBeenAwarded: true
                 }
               }
             };
@@ -1468,13 +1654,15 @@
         if (updated) savePlayerToSupabase(updated).catch(console.error);
         setParticipants(updatedParticipants);
         
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.6 },
-          colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#10b981'],
-          zIndex: 10002
-        });
+        if (coins > 0) {
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#f97316', '#fb923c', '#1e3a8a', '#3b82f6', '#10b981'],
+            zIndex: 10002
+          });
+        }
 
         if (currentUser && currentUser.name === participantName && currentUser.category === participantCategory) {
           const updatedUser = updatedParticipants.find(p => p.name === participantName && p.category === participantCategory);
@@ -1918,7 +2106,7 @@
                   !p.isAdmin && 
                   p.games[game.id]?.scanned && 
                   game.gamePoints > 0 && 
-                  p.games[game.id]?.coinsEarned === 0
+                  !p.games[game.id]?.hasBeenAwarded
                 ) : [];
 
                 const isCompleted = !isAdmin && gameData?.scanned && gameData?.gamePercent > 0;
@@ -1938,14 +2126,27 @@
                   }),
                   
                   React.createElement('div', { className: "p-4 flex-1 flex flex-col" },
-                    // Title row with Done badge
+                    // Title row with status badge
                     React.createElement('div', { className: "flex items-center mb-1" },
                       React.createElement('h3', { className: "font-bold text-lg text-gray-800 flex-1" }, game.name),
-                      gameData?.scanned && !isAdmin && React.createElement('div', { 
-                        className: "px-3 py-1 bg-lime-200 border-2 border-lime-700 text-lime-900 rounded-full text-xs font-bold ml-2" 
-                      },
-                        '✓ Done'
-                      )
+                      !isAdmin && (() => {
+                        if (!gameData?.scanned) {
+                          // Not scanned yet
+                          return React.createElement('div', { 
+                            className: "px-3 py-1 bg-gray-200 border-2 border-gray-400 text-gray-700 rounded-full text-xs font-bold ml-2" 
+                          }, '🔒 Not Scanned');
+                        } else if (game.gamePoints > 0 && !gameData?.hasBeenAwarded) {
+                          // Scanned but game points pending
+                          return React.createElement('div', { 
+                            className: "px-3 py-1 bg-yellow-200 border-2 border-yellow-600 text-yellow-900 rounded-full text-xs font-bold ml-2" 
+                          }, '⏳ Game Pending');
+                        } else {
+                          // Fully complete
+                          return React.createElement('div', { 
+                            className: "px-3 py-1 bg-lime-200 border-2 border-lime-700 text-lime-900 rounded-full text-xs font-bold ml-2" 
+                          }, '✓ Done');
+                        }
+                      })()
                     ),
 
                     // Stage name row
@@ -1986,43 +2187,61 @@
         successModalData && React.createElement('div', { className: "modal-backdrop" },
           React.createElement('div', { className: "success-modal" },
             React.createElement('div', { className: "text-center" },
-              React.createElement('div', { className: "text-6xl mb-3 animate-bounce" }, '🎉'),
+              React.createElement('div', { className: "text-6xl mb-3 animate-bounce" }, 
+                successModalData.isEnlightenment ? '🧘' : '🎉'
+              ),
               React.createElement('div', { className: "success-checkmark" },
                 React.createElement(Icon, { name: 'Check', size: 48, className: 'text-white' })
               ),
               React.createElement('h2', { className: "text-2xl font-bold text-gray-800 mb-2" }, 
-                successModalData.isGamePoints 
+                successModalData.isEnlightenment
+                  ? 'Enlightened! 🎊'
+                  : successModalData.isGamePoints 
                   ? `Game Points Awarded!`
                   : `${successModalData.game.stageName} Unlocked!`
               ),
               React.createElement('p', { className: "text-lg font-semibold text-orange-600 mb-3" },
                 successModalData.game.name
               ),
-              !successModalData.isGamePoints && React.createElement('p', { className: "text-sm italic text-gray-600 mb-4 px-4" },
-                `"${successModalData.game.stageSlogan}"`
-              ),
-              React.createElement('div', { className: "bg-orange-50 rounded-xl p-4 mb-4 border border-orange-200" },
-                successModalData.isGamePoints 
-                  ? React.createElement('div', null,
-                      React.createElement('div', { className: "text-sm text-gray-600 mb-1" }, 'Points Earned'),
-                      React.createElement('div', { className: "text-3xl font-bold text-orange-600" },
-                        `+${successModalData.pointsEarned}%`
-                      )
+              successModalData.isEnlightenment 
+                ? React.createElement('div', null,
+                    React.createElement('div', { className: "text-4xl mb-3" }, '🐒🙉🙈🙊🐵'),
+                    React.createElement('p', { className: "text-sm italic text-gray-600 mb-4 px-4" },
+                      '"The seeker is the finder"'
+                    ),
+                    React.createElement('div', { className: "bg-orange-50 rounded-xl p-4 mb-4 border border-orange-200" },
+                      React.createElement('div', { className: "text-sm text-gray-600 mb-1" }, 'All Stages Complete'),
+                      React.createElement('div', { className: "text-3xl font-bold text-orange-600" }, '🏆')
+                    ),
+                    React.createElement('p', { className: "text-sm text-gray-500" }, 'Congratulations! 🙏')
+                  )
+                : React.createElement('div', null,
+                    !successModalData.isGamePoints && React.createElement('p', { className: "text-sm italic text-gray-600 mb-4 px-4" },
+                      `"${successModalData.game.stageSlogan}"`
+                    ),
+                    React.createElement('div', { className: "bg-orange-50 rounded-xl p-4 mb-4 border border-orange-200" },
+                      successModalData.isGamePoints 
+                        ? React.createElement('div', null,
+                            React.createElement('div', { className: "text-sm text-gray-600 mb-1" }, 'Points Earned'),
+                            React.createElement('div', { className: "text-3xl font-bold text-orange-600" },
+                              `+${successModalData.pointsEarned}%`
+                            )
+                          )
+                        : React.createElement('div', null,
+                            React.createElement('div', { className: "text-sm text-gray-600 mb-1" },
+                              `Stage ${successModalData.scannedCount} of ${GAMES.length}`
+                            ),
+                            React.createElement('div', { className: "text-3xl font-bold text-orange-600" },
+                              `${successModalData.totalProgress}%`
+                            )
+                          )
+                    ),
+                    !successModalData.isGamePoints && React.createElement('p', { className: "text-sm text-gray-500" },
+                      successModalData.scannedCount === GAMES.length 
+                        ? 'Journey complete! 🙏' 
+                        : 'Continue your journey...'
                     )
-                  : React.createElement('div', null,
-                      React.createElement('div', { className: "text-sm text-gray-600 mb-1" },
-                        `Stage ${successModalData.scannedCount} of ${GAMES.length}`
-                      ),
-                      React.createElement('div', { className: "text-3xl font-bold text-orange-600" },
-                        `${successModalData.totalProgress}%`
-                      )
-                    )
-              ),
-              !successModalData.isGamePoints && React.createElement('p', { className: "text-sm text-gray-500" },
-                successModalData.scannedCount === GAMES.length 
-                  ? 'Journey complete! 🙏' 
-                  : 'Continue your journey...'
-              )
+                  )
             )
           )
         ),
@@ -2170,7 +2389,19 @@
               className: 'w-full px-4 py-2 border-2 border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-orange-500'
             }),
 
-            React.createElement('h4', { className: "font-bold text-gray-700 mb-4" }, 'Pending Players'),
+            React.createElement('div', { className: "flex justify-between items-center mb-4" },
+              React.createElement('h4', { className: "font-bold text-gray-700" }, 'Pending Players'),
+              React.createElement('button', {
+                onClick: async () => {
+                  const players = await loadPlayersFromSupabase();
+                  setParticipants(players);
+                  showToast('List refreshed!', 'success');
+                },
+                className: "text-blue-500 hover:text-blue-700 p-2 hover:bg-blue-50 rounded-lg transition-all"
+              },
+                React.createElement(Icon, { name: 'RefreshCw', size: 18 })
+              )
+            ),
 
             React.createElement('div', { className: "space-y-4" },
               participants.filter(p => {
@@ -2178,7 +2409,7 @@
                 if (!p.games || !p.games[selectedGame.id]) return false;
                 if (!p.games[selectedGame.id].scanned) return false;
                 if (selectedGame.gamePoints <= 0) return false;
-                if (p.games[selectedGame.id].coinsEarned > 0) return false;
+                if (p.games[selectedGame.id].hasBeenAwarded) return false;
                 if (gameModalSearch && gameModalSearch.trim()) {
                   const search = gameModalSearch.toLowerCase();
                   if (!p.name.toLowerCase().includes(search) && !p.category.toLowerCase().includes(search)) {
@@ -2193,7 +2424,7 @@
                 if (!p.games || !p.games[selectedGame.id]) return false;
                 if (!p.games[selectedGame.id].scanned) return false;
                 if (selectedGame.gamePoints <= 0) return false;
-                if (p.games[selectedGame.id].coinsEarned > 0) return false;
+                if (p.games[selectedGame.id].hasBeenAwarded) return false;
                 if (gameModalSearch && gameModalSearch.trim()) {
                   const search = gameModalSearch.toLowerCase();
                   if (!p.name.toLowerCase().includes(search) && !p.category.toLowerCase().includes(search)) {
@@ -2201,7 +2432,7 @@
                   }
                 }
                 return true;
-              }).map(player => 
+              }).map(player =>
                 React.createElement('div', {
                   key: `${player.name}-${player.category}`,
                   className: "bg-gray-50 border border-gray-200 rounded-xl p-4"
@@ -2235,7 +2466,7 @@
                     React.createElement('button', {
                       onClick: async () => {
                         if (await discardPlayer(player.name, player.category, selectedGame.id)) {
-                          showToast(`${player.name} discarded (0%)`, 'info');
+                          showToast(`${player.name} awarded 0%`, 'info');
                         }
                       },
                       className: "px-4 py-2 bg-gray-400 text-white rounded-lg font-bold hover:bg-gray-500 transition-all"
@@ -2289,6 +2520,7 @@
               onClick: async () => {
                 const result = await showConfirm('Logout', 'Are you sure you want to logout?');
                 if (result) {
+                  localStorage.removeItem('sevaMelaSession');
                   window.location.reload();
                 }
               },
